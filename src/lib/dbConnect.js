@@ -1,11 +1,14 @@
+/* Path: src/lib/dbConnect.js */
+/* Perbaikan: Memastikan penggunaan nama variabel yang benar (MONGODB_URI) */
+
 import mongoose from 'mongoose';
 
-// Mengambil URL koneksi dari file .env.local
-const MONGODB_URI = process.env.MONGODB_URI;
+// [PERBAIKAN]: Menggunakan nama variabel yang ada di kode Anda
+const MONGODB_URI = process.env.MONGODB_URI; 
 
 if (!MONGODB_URI) {
   throw new Error(
-    'Tolong definisikan variabel MONGODB_URI di dalam .env.local'
+    'Tolong definisikan variabel MONGODB_URI di dalam Environment Variables Vercel.'
   );
 }
 

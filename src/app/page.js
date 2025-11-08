@@ -26,7 +26,7 @@ export default async function Home() {
         <div className="absolute inset-0 bg-black/10"></div>
         <div
           style={{
-            backgroundImage: 'url("/bg1.png")',
+            backgroundImage: 'url("/")',
             backgroundSize: "cover",
             backgroundPosition: "center",
             height: "100vh",
