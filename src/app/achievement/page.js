@@ -1,0 +1,151 @@
+/* Path: src/app/achievement/page.js */
+/* Perbaikan: Rombak total UI/UX menjadi Timeline */
+
+import Image from 'next/image';
+import { AlertTriangle, Trophy } from 'lucide-react';
+import ImageWithFallback from '@/components/common/ImageWithFallback'; // Kita butuh ini
+
+// Fungsi untuk mengambil data di server
+async function getAchievements() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+    // API sudah otomatis mengurutkan berdasarkan tahun (year: -1)
+    const res = await fetch(`${baseUrl}/api/achievements`, { cache: 'no-store' });
+
+    if (!res.ok) {
+      throw new Error('Gagal mengambil data achievement');
+    }
+
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(data.error || 'API mengembalikan data yang tidak valid');
+    }
+    
+    // --- [LOGIKA PENGELOMPOKAN TAHUN] ---
+    const items = data.data || [];
+    const groupedByYear = items.reduce((acc, item) => {
+      const year = item.year;
+      if (!acc[year]) {
+        acc[year] = []; // Buat array baru untuk tahun itu
+      }
+      acc[year].push(item); // Tambahkan item ke tahunnya
+      return acc;
+    }, {}); // Hasil akhir: { 2024: [...], 2023: [...] }
+
+    return { groupedAchievements: groupedByYear, error: null };
+  } catch (error) {
+    console.error("FETCH ERROR (Achievement Page):", error);
+    return { groupedAchievements: {}, error: error.message };
+  }
+}
+
+// Komponen Halaman (Server Component)
+export default async function AchievementPage() {
+  const { groupedAchievements, error } = await getAchievements();
+  const years = Object.keys(groupedAchievements).sort((a, b) => b - a); // Urutkan tahun dari terbaru ke terlama
+
+  return (
+    <div className="min-h-screen bg-white">
+      
+      {/* 1. HERO SECTION (Banner) */}
+      <section 
+        className="relative py-48 px-8 text-center text-white bg-cover bg-center"
+        // Ganti gambar ini dengan gambar hero untuk Achievement
+        style={{ backgroundImage: "url('/achievement-hero.png')" }} 
+      >
+        <div className="absolute inset-0 bg-black opacity-50"></div> {/* Overlay gelap */}
+        <div className="relative z-10">
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4">OUR ACHIEVEMENTS</h1>
+          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
+            Perjalanan dan pencapaian kami dari tahun ke tahun.
+          </p>
+        </div>
+      </section>
+
+      {/* 2. KONTEN TIMELINE */}
+      <section className="py-20 px-8">
+        <div className="container mx-auto max-w-4xl">
+
+          {/* Tampilkan pesan jika error */}
+          {error && (
+            <div className="flex items-center justify-center bg-red-100 text-red-700 p-6 rounded-lg mb-12 max-w-lg mx-auto">
+              <AlertTriangle className="w-8 h-8 mr-4" />
+              <div>
+                <h3 className="text-xl font-bold">Gagal Memuat Data</h3>
+                <p>{error}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Tampilkan pesan jika tidak ada data */}
+          {!error && years.length === 0 && (
+            <p className="text-center text-gray-500 text-xl">Belum ada data pencapaian untuk ditampilkan.</p>
+          )}
+
+          {/* --- [LAYOUT TIMELINE BARU] --- */}
+          <div className="relative">
+            {/* Garis Vertikal (hanya terlihat di layar md ke atas) */}
+            <div 
+              className="hidden md:block absolute left-9 top-0 bottom-0 w-1 bg-blue-100 rounded-full" 
+              style={{ transform: 'translateX(-50%)' }}
+            ></div>
+
+            {years.map((year) => (
+              <div key={year} className="mb-16">
+                {/* Judul Tahun */}
+                <div className="flex items-center mb-8">
+                  <span 
+                    className="z-10 flex-shrink-0 w-16 h-16 rounded-full text-white flex items-center justify-center text-2xl font-bold shadow-lg"
+                    style={{ backgroundColor: '#000D81' }} // <-- WARNA BARU: Angka Tahun
+                  >
+                    {year}
+                  </span>
+                  <div 
+                    className="hidden md:block w-full h-0.5 ml-4"
+                    style={{ backgroundColor: '#000D81' }} // <-- WARNA BARU: Garis Horizontal
+                  ></div>
+                </div>
+                
+                {/* Kartu Achievement untuk tahun ini */}
+                <div className="space-y-12 pl-0 md:pl-24">
+                  {groupedAchievements[year].map((item) => (
+                    <div 
+                      key={item._id} 
+                      className="flex flex-col md:flex-row bg-white rounded-lg shadow-xl overflow-hidden border border-gray-100"
+                    >
+                      {/* Gambar */}
+                      <div className="w-full md:w-5/12 flex-shrink-0">
+                        <div className="relative aspect-video md:aspect-auto md:h-full w-full bg-gray-200">
+                          <ImageWithFallback
+                            src={item.imageUrl}
+                            fallbackSrc={'https://placehold.co/400x300/e2e8f0/64748b?text=Foto'}
+                            alt={item.title}
+                            layout="fill"
+                            objectFit="cover"
+                            unoptimized
+                          />
+                        </div>
+                      </div>
+                      {/* Info Teks */}
+                      <div className="p-6 md:p-8 w-full">
+                        <div className="flex items-center mb-2">
+                          <Trophy className="w-5 h-5 text-yellow-500 mr-2 flex-shrink-0" />
+                          <h3 className="text-2xl font-bold text-gray-900">{item.title}</h3>
+                        </div>
+                        <p className="text-gray-700 leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* --- [AKHIR TIMELINE] --- */}
+
+        </div>
+      </section>
+    </div>
+  );
+}
