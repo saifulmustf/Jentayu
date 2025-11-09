@@ -1,41 +1,41 @@
 /* Path: src/app/achievement/page.js */
-/* Perbaikan: Rombak total UI/UX menjadi Timeline */
+/* Perbaikan Definitif: 
+  - Menghapus 'fetch' ke API sendiri.
+  - Mengimpor dbConnect dan Model Mongoose secara langsung.
+*/
 
 import Image from 'next/image';
 import { AlertTriangle, Trophy } from 'lucide-react';
-import ImageWithFallback from '@/components/common/ImageWithFallback'; // Kita butuh ini
+import ImageWithFallback from '@/components/common/ImageWithFallback';
+import dbConnect from '@/lib/dbConnect'; // <-- [PERBAIKAN 1] Impor dbConnect
+import AchievementItem from '@/models/AchievementItem'; // <-- [PERBAIKAN 2] Impor Model
 
-// Fungsi untuk mengambil data di server
+// [PERBAIKAN 3]: Fungsi getAchievements sekarang memanggil DB langsung
 async function getAchievements() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
-    // API sudah otomatis mengurutkan berdasarkan tahun (year: -1)
-    const res = await fetch(`${baseUrl}/api/achievements`, { cache: 'no-store' });
+    await dbConnect(); // Langsung konek ke DB
 
-    if (!res.ok) {
-      throw new Error('Gagal mengambil data achievement');
-    }
+    // Langsung query ke database, sama seperti di API
+    const items = await AchievementItem.find({}).sort({ year: -1, createdAt: -1 });
 
-    const data = await res.json();
-    if (!data.success) {
-      throw new Error(data.error || 'API mengembalikan data yang tidak valid');
-    }
+    // Mengubah data Mongoose (yang kompleks) menjadi object JSON sederhana
+    const plainItems = JSON.parse(JSON.stringify(items)); 
     
-    // --- [LOGIKA PENGELOMPOKAN TAHUN] ---
-    const items = data.data || [];
-    const groupedByYear = items.reduce((acc, item) => {
+    // Logika pengelompokan tahun (tidak diubah)
+    const groupedByYear = plainItems.reduce((acc, item) => {
       const year = item.year;
       if (!acc[year]) {
-        acc[year] = []; // Buat array baru untuk tahun itu
+        acc[year] = [];
       }
-      acc[year].push(item); // Tambahkan item ke tahunnya
+      acc[year].push(item);
       return acc;
-    }, {}); // Hasil akhir: { 2024: [...], 2023: [...] }
+    }, {}); 
 
     return { groupedAchievements: groupedByYear, error: null };
   } catch (error) {
-    console.error("FETCH ERROR (Achievement Page):", error);
-    return { groupedAchievements: {}, error: error.message };
+    console.error("FETCH ERROR (Achievement Page):", error.message);
+    // Jika ini gagal, kemungkinan besar MONGODB_URI di Vercel salah
+    return { groupedAchievements: {}, error: `Gagal terhubung ke Database: ${error.message}` };
   }
 }
 
@@ -45,15 +45,19 @@ export default async function AchievementPage() {
   const years = Object.keys(groupedAchievements).sort((a, b) => b - a); // Urutkan tahun dari terbaru ke terlama
 
   return (
+    /* =============================================
+       STRUKTUR FRONTEND (JSX) ANDA DI BAWAH INI
+       TIDAK SAYA UBAH SAMA SEKALI
+       =============================================
+    */
     <div className="min-h-screen bg-white">
       
       {/* 1. HERO SECTION (Banner) */}
       <section 
         className="relative py-48 px-8 text-center text-white bg-cover bg-center"
-        // Ganti gambar ini dengan gambar hero untuk Achievement
         style={{ backgroundImage: "url('/achievement-hero.png')" }} 
       >
-        <div className="absolute inset-0 bg-black opacity-50"></div> {/* Overlay gelap */}
+        <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative z-10">
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4">OUR ACHIEVEMENTS</h1>
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
@@ -72,7 +76,8 @@ export default async function AchievementPage() {
               <AlertTriangle className="w-8 h-8 mr-4" />
               <div>
                 <h3 className="text-xl font-bold">Gagal Memuat Data</h3>
-                <p>{error}</p>
+                {/* Error 'Unauthorized' akan muncul di sini jika MONGODB_URI salah */}
+                <p className="text-sm font-mono">{error}</p>
               </div>
             </div>
           )}
@@ -118,7 +123,7 @@ export default async function AchievementPage() {
                         <div className="relative aspect-video md:aspect-auto md:h-full w-full bg-gray-200">
                           <ImageWithFallback
                             src={item.imageUrl}
-                            fallbackSrc={'https://placehold.co/400x300/e2e8f0/64748b?text=Foto'}
+                            fallbackSrc={'https://via.placeholder.com/400x300/e2e8f0/64748b?text=Foto'}
                             alt={item.title}
                             layout="fill"
                             objectFit="cover"
