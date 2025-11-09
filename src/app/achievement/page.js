@@ -1,5 +1,5 @@
 /* Path: src/app/achievement/page.js */
-/* Perbaikan: Rombak total UI/UX menjadi Timeline */
+/* Perbaikan: Mengganti 'baseUrl' agar berfungsi di Vercel */
 
 import Image from 'next/image';
 import { AlertTriangle, Trophy } from 'lucide-react';
@@ -8,12 +8,21 @@ import ImageWithFallback from '@/components/common/ImageWithFallback'; // Kita b
 // Fungsi untuk mengambil data di server
 async function getAchievements() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
-    // API sudah otomatis mengurutkan berdasarkan tahun (year: -1)
-    const res = await fetch(`${baseUrl}/api/achievements`, { cache: 'no-store' });
+    // --- [PERBAIKAN KUNCI] ---
+    // Logika ini akan menggunakan URL Vercel (jika di Vercel) 
+    // atau localhost (jika di lokal)
+    const baseUrl = process.env.NODE_ENV === 'production' && process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}` 
+        : 'http://localhost:3000';
+    // -------------------------
+
+    // [PERBAIKAN 2]: Menghapus 'cache: 'no-store'' yang menyebabkan error build Vercel
+    const res = await fetch(`${baseUrl}/api/achievements`); 
 
     if (!res.ok) {
-      throw new Error('Gagal mengambil data achievement');
+      // Coba baca error dari Vercel jika gagal
+      const errorBody = await res.text();
+      throw new Error(`Gagal mengambil data achievement. Status: ${res.status}. Body: ${errorBody}`);
     }
 
     const data = await res.json();
@@ -26,16 +35,17 @@ async function getAchievements() {
     const groupedByYear = items.reduce((acc, item) => {
       const year = item.year;
       if (!acc[year]) {
-        acc[year] = []; // Buat array baru untuk tahun itu
+        acc[year] = []; 
       }
-      acc[year].push(item); // Tambahkan item ke tahunnya
+      acc[year].push(item); 
       return acc;
-    }, {}); // Hasil akhir: { 2024: [...], 2023: [...] }
+    }, {}); 
 
     return { groupedAchievements: groupedByYear, error: null };
   } catch (error) {
-    console.error("FETCH ERROR (Achievement Page):", error);
-    return { groupedAchievements: {}, error: error.message };
+    console.error("FETCH ERROR (Achievement Page):", error.message);
+    // [PERBAIKAN 3]: Tampilkan pesan error yang lebih jelas
+    return { groupedAchievements: {}, error: `Fetch Error: ${error.message}` };
   }
 }
 
@@ -50,10 +60,9 @@ export default async function AchievementPage() {
       {/* 1. HERO SECTION (Banner) */}
       <section 
         className="relative py-48 px-8 text-center text-white bg-cover bg-center"
-        // Ganti gambar ini dengan gambar hero untuk Achievement
         style={{ backgroundImage: "url('/achievement-hero.png')" }} 
       >
-        <div className="absolute inset-0 bg-black opacity-50"></div> {/* Overlay gelap */}
+        <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative z-10">
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4">OUR ACHIEVEMENTS</h1>
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
@@ -72,7 +81,8 @@ export default async function AchievementPage() {
               <AlertTriangle className="w-8 h-8 mr-4" />
               <div>
                 <h3 className="text-xl font-bold">Gagal Memuat Data</h3>
-                <p>{error}</p>
+                {/* Error 'Unauthorized' akan muncul di sini jika MONGODB_URI salah */}
+                <p className="text-sm font-mono">{error}</p> 
               </div>
             </div>
           )}
@@ -84,7 +94,6 @@ export default async function AchievementPage() {
 
           {/* --- [LAYOUT TIMELINE BARU] --- */}
           <div className="relative">
-            {/* Garis Vertikal (hanya terlihat di layar md ke atas) */}
             <div 
               className="hidden md:block absolute left-9 top-0 bottom-0 w-1 bg-blue-100 rounded-full" 
               style={{ transform: 'translateX(-50%)' }}
@@ -96,13 +105,13 @@ export default async function AchievementPage() {
                 <div className="flex items-center mb-8">
                   <span 
                     className="z-10 flex-shrink-0 w-16 h-16 rounded-full text-white flex items-center justify-center text-2xl font-bold shadow-lg"
-                    style={{ backgroundColor: '#000D81' }} // <-- WARNA BARU: Angka Tahun
+                    style={{ backgroundColor: '#000D81' }} 
                   >
                     {year}
                   </span>
                   <div 
                     className="hidden md:block w-full h-0.5 ml-4"
-                    style={{ backgroundColor: '#000D81' }} // <-- WARNA BARU: Garis Horizontal
+                    style={{ backgroundColor: '#000D81' }} 
                   ></div>
                 </div>
                 
@@ -118,7 +127,7 @@ export default async function AchievementPage() {
                         <div className="relative aspect-video md:aspect-auto md:h-full w-full bg-gray-200">
                           <ImageWithFallback
                             src={item.imageUrl}
-                            fallbackSrc={'https://placehold.co/400x300/e2e8f0/64748b?text=Foto'}
+                            fallbackSrc={'https://via.placeholder.com/400x300/e2e8f0/64748b?text=Foto'}
                             alt={item.title}
                             layout="fill"
                             objectFit="cover"

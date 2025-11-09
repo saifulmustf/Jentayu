@@ -1,50 +1,42 @@
 /* Path: src/app/news/page.js */
-/*
-  Perbaikan:
-  1. Menambahkan Hero Section (Banner) di atas.
-  2. Mengubah grid dari 3 kolom menjadi 2 kolom (md:grid-cols-2).
-*/
+/* Perbaikan: Menghapus 'fetch' dan memanggil DB langsung */
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { AlertTriangle } from 'lucide-react'; // Import ikon untuk error
+import { AlertTriangle } from 'lucide-react';
+import dbConnect from '@/lib/dbConnect'; // <-- [PERBAIKAN 1]
+import NewsItem from '@/models/NewsItem'; // <-- [PERBAIKAN 2]
 
-// Fungsi ini akan mengambil data di server
+// [PERBAIKAN 3]: Fungsi getNews sekarang memanggil DB langsung
 async function getNews() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/news`, {
-      cache: 'no-store', // Selalu ambil data terbaru
-    });
+    await dbConnect(); // Koneksi langsung
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.error || 'Gagal mengambil data berita');
-    }
-
-    const data = await res.json();
-    return { items: data.data || [], error: null }; // Kembalikan object
+    const items = await NewsItem.find({}).sort({ createdAt: -1 });
+    const plainItems = JSON.parse(JSON.stringify(items));
+    
+    return { items: plainItems, error: null };
   } catch (error) {
     console.error("FETCH ERROR (News Page):", error);
-    return { items: [], error: error.message }; // Kembalikan object error
+    // Error ini sekarang akan langsung menunjukkan masalah MONGODB_URI
+    return { items: [], error: `Gagal terhubung ke Database: ${error.message}` };
   }
 }
 
 // Komponen Halaman (Server Component)
 export default async function NewsPage() {
-  // Panggil fungsi getNews dan tunggu datanya
   const { items: newsItems, error } = await getNews();
 
   return (
-    <div className="min-h-screen bg-gray-100"> {/* Latar belakang abu-abu terang */}
+    // JSX Anda di bawah ini tidak diubah
+    <div className="min-h-screen bg-gray-100">
       
       {/* 1. HERO SECTION (BARU) */}
       <section 
         className="relative py-48 px-8 text-center text-white bg-cover bg-center"
-        // Ganti gambar ini dengan gambar hero untuk Berita Anda
         style={{ backgroundImage: "url('/news-hero.png')" }} 
       >
-        <div className="absolute inset-0 bg-black opacity-50"></div> {/* Overlay gelap */}
+        <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative z-10">
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4">NEWS & UPDATES</h1>
         </div>
@@ -70,15 +62,13 @@ export default async function NewsPage() {
             <p className="text-center text-gray-500 text-xl">Belum ada berita untuk ditampilkan.</p>
           )}
 
-          {/* [PERBAIKAN]: Grid diubah menjadi 2 kolom (md:grid-cols-2) */}
-          {/* 'max-w-5xl' digunakan agar grid 2 kolom tidak terlalu lebar di layar besar */}
+          {/* Grid diubah menjadi 2 kolom (md:grid-cols-2) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
             
             {newsItems.map((item) => (
               <Link 
                 href={`/news/${item._id}`} 
                 key={item._id} 
-                // Kartu berita dengan 'bg-white'
                 className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl"
               >
                 {/* Gambar (tetap rasio 16:9) */}
@@ -98,11 +88,11 @@ export default async function NewsPage() {
                       month: 'long',
                       year: 'numeric',
                     })}
+                  "&gt;
                   </p>
                   <h2 className="text-2xl font-bold text-gray-800 mb-3 line-clamp-2" title={item.title}>
                     {item.title}
                   </h2>
-                  {/* Kita gunakan 'line-clamp' untuk membatasi deskripsi */}
                   <p className="text-gray-600 mb-4 line-clamp-3">
                     {item.content}
                   </p>

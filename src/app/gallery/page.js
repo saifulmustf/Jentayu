@@ -1,27 +1,25 @@
 /* Path: src/app/gallery/page.js */
-/* Perbaikan: Memisahkan Server Component dan Client Component */
+/* Perbaikan: Menghapus 'fetch' dan memanggil DB langsung */
 
-// [MODIFIKASI]: Import komponen baru
 import GalleryGrid from '@/components/gallery/GalleryGrid'; 
 import { AlertTriangle } from 'lucide-react';
+import dbConnect from '@/lib/dbConnect'; // <-- [PERBAIKAN 1]
+import GalleryItem from '@/models/GalleryItem'; // <-- [PERBAIKAN 2]
 
-// Fungsi ini akan mengambil data galeri di server
+// [PERBAIKAN 3]: Fungsi getGalleryItems sekarang memanggil DB langsung
 async function getGalleryItems() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/gallery`, {
-      cache: 'no-store', 
-    });
+    await dbConnect(); // Koneksi langsung
 
-    if (!res.ok) {
-      throw new Error('Gagal mengambil data galeri');
-    }
+    const items = await GalleryItem.find({}).sort({ createdAt: -1 });
+    // Konversi ke JSON sederhana
+    const plainItems = JSON.parse(JSON.stringify(items));
 
-    const data = await res.json();
-    return { items: data.data || [], error: null };
+    return { items: plainItems, error: null };
   } catch (error) {
     console.error("FETCH ERROR (Gallery Page):", error);
-    return { items: [], error: error.message };
+    // Error ini sekarang akan langsung menunjukkan masalah MONGODB_URI
+    return { items: [], error: `Gagal terhubung ke Database: ${error.message}` };
   }
 }
 
@@ -30,15 +28,15 @@ export default async function GalleryPage() {
   const { items, error } = await getGalleryItems();
 
   return (
+    // JSX Anda di bawah ini tidak diubah
     <div className="min-h-screen bg-gray-100">
       
       {/* 1. HERO SECTION (Sesuai GALLERY.jpg) */}
       <section 
         className="relative py-48 px-8 text-center text-white bg-cover bg-center"
-        // Pastikan Anda menaruh gambar 'GALLERY.jpg' Anda di 'public/images/gallery-hero.jpg'
         style={{ backgroundImage: "url('/gallery-hero.png')" }} 
       >
-        <div className="absolute inset-0 bg-black opacity-50"></div> {/* Overlay gelap */}
+        <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative z-10">
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4">GALLERY</h1>
         </div>
@@ -47,8 +45,6 @@ export default async function GalleryPage() {
       {/* 2. GRID FOTO (Masonry Layout) */}
       <section className="py-20 px-4 md:px-8">
         <div className="container mx-auto">
-          
-          {/* [DIHAPUS]: Blok <style jsx> sudah dipindah ke GalleryGrid.js */}
           
           {/* Tampilkan pesan jika error */}
           {error && (
@@ -66,8 +62,7 @@ export default async function GalleryPage() {
             <p className="text-center text-gray-500 text-xl">Belum ada foto di galeri.</p>
           )}
 
-          {/* [MODIFIKASI]: Memanggil Client Component <GalleryGrid> */}
-          {/* Kita kirim 'items' sebagai prop */}
+          {/* Memanggil Client Component <GalleryGrid> */}
           {!error && items.length > 0 && (
             <GalleryGrid items={items} />
           )}
