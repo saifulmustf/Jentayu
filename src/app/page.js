@@ -1,5 +1,5 @@
 /* Path: src/app/page.js */
-/* Perbaikan: Menghapus 'fetch' dan memanggil DB langsung */
+/* Perbaikan: Memindahkan 'fetch' dari komponen anak, memanggil DB langsung */
 
 import React from 'react';
 import Link from 'next/link';
@@ -8,11 +8,12 @@ import Image from 'next/image';
 // Import komponen-komponen statis
 import AboutSection from '@/components/home/AboutSection';
 import SubTeamSection from '@/components/home/SubTeamSection';
-import SponsorSection from '@/components/home/SponsorSection';
+// import SponsorSection from '@/components/home/SponsorSection'; // Dihapus dari statis
 
 // Import komponen-komponen DINAMIS
 import LatestNewsSection from '@/components/home/LatestNewsSection';
 import GalleryPreviewSection from '@/components/home/GalleryPreviewSection';
+import SponsorSection from '@/components/home/SponsorSection'; // Diimpor sebagai dinamis
 
 // [PERBAIKAN 1]: Impor Model dan dbConnect
 import dbConnect from '@/lib/dbConnect';
@@ -27,9 +28,9 @@ async function getHomepageData() {
 
     // 1. Fetch Berita Terbaru (Limit 3)
     const newsItems = await NewsItem.find({}).sort({ createdAt: -1 }).limit(3);
-    // 2. Fetch Galeri Terbaru (Limit 6)
-    const galleryItems = await GalleryItem.find({}).sort({ createdAt: -1 }).limit(6);
-    // 3. Fetch Sponsor
+    // 2. Fetch Galeri Terbaru (Limit 3, sesuai kode Anda)
+    const galleryItems = await GalleryItem.find({}).sort({ createdAt: -1 }).limit(3);
+    // 3. Fetch Sponsor (Penyebab error 'localhost:3000' Anda)
     const sponsorItems = await SponsorItem.find({}).sort({ createdAt: 'asc' });
 
     // Konversi data Mongoose ke object JSON sederhana
@@ -39,27 +40,23 @@ async function getHomepageData() {
     
     return { latestNews, latestGallery, sponsors, error: null };
   } catch (e) {
-    console.error("Error fetching homepage data:", e);
+    console.error("Error fetching homepage data:", e.message);
     // Error ini akan muncul jika MONGODB_URI di Vercel salah
     return { latestNews: [], latestGallery: [], sponsors: [], error: `Gagal terhubung ke Database: ${e.message}` };
   }
 }
-// -------------------------------------------------------------------
-
 
 export default async function Home() {
+  // [PERBAIKAN 3]: Panggil data di level atas
   const { latestNews, latestGallery, sponsors, error } = await getHomepageData();
 
   return (
     // Kita gunakan <main> sebagai pembungkus utama
     <main className="bg-white">
       {/* =============================================
-        STRUKTUR FRONTEND ANDA (JSX) DI BAWAH INI
-        TIDAK SAYA UBAH SAMA SEKALI
+        JSX ANDA (TIDAK DIUBAH)
         =============================================
       */}
-
-      {/* ===== 1. HERO SECTION (Kode UI Anda) ===== */}
       <section
         className="relative h-screen bg-cover bg-center"
         style={{ backgroundImage: "url('/Home.png')" }} 
@@ -67,14 +64,14 @@ export default async function Home() {
         <div className="absolute inset-0 bg-black/10"></div>
         <div
           style={{
-            backgroundImage: 'url("/")', // <-- Anda punya '/' di sini, mungkin maksudnya '/bg1.png'?
+            backgroundImage: 'url("/")', 
             backgroundSize: "cover",
             backgroundPosition: "center",
             height: "100vh",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            paddingLeft: "80px", // Hati-hati di mobile
+            paddingLeft: "80px", 
             color: "white",
           }}
         >
@@ -102,22 +99,12 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ===== 2. ABOUT US ===== */}
       <AboutSection />
-
-      {/* ===== 3. OUR ROBOT (SUB TEAM) ===== */}
       <SubTeamSection />
 
-      {/* ===== 4. BERITA TERBARU (DINAMIS) ===== */}
-      {/* [PERBAIKAN 3]: Kita teruskan data sebagai props
-        Ini akan memperbaiki error di LatestNewsSection juga
-      */}
+      {/* [PERBAIKAN 4]: Teruskan data sebagai props */}
       <LatestNewsSection initialNews={latestNews} loadError={error} />
-      
-      {/* ===== 5. GALERI PREVIEW (DINAMIS) ===== */}
       <GalleryPreviewSection initialGallery={latestGallery} loadError={error} />
-
-      {/* ===== 6. OUR SPONSORED (DINAMIS) ===== */}
       <SponsorSection initialSponsors={sponsors} loadError={error} />
 
       {/* Menampilkan error jika fetch gagal di Homepage */}

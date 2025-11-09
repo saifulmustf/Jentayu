@@ -1,25 +1,27 @@
 /* Path: src/components/home/SponsorSection.js */
-/* KODE DINAMIS: Mengambil data sponsor dari API */
+/* Perbaikan: Menghapus 'fetch' dan memanggil DB langsung */
 
 import Image from 'next/image';
 
-// Fungsi untuk mengambil data sponsor di server
+// [PERBAIKAN 1]: Impor Model dan dbConnect
+import dbConnect from '@/lib/dbConnect';
+import SponsorItem from '@/models/SponsorItem';
+
+// [PERBAIKAN 2]: getSponsors sekarang memanggil DB langsung
 async function getSponsors() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/sponsors`, { 
-      cache: 'no-store' // Selalu ambil data terbaru
-    });
+    await dbConnect(); // Koneksi langsung ke DB
+    
+    // Langsung query ke database
+    const items = await SponsorItem.find({}).sort({ createdAt: 'asc' });
+    
+    // Konversi data Mongoose ke object JSON sederhana
+    const plainItems = JSON.parse(JSON.stringify(items));
+    return plainItems;
 
-    if (!res.ok) {
-      console.error("Gagal mengambil data sponsor:", res.status);
-      return [];
-    }
-
-    const data = await res.json();
-    return data.data || []; 
   } catch (error) {
-    console.error("FETCH ERROR (Sponsor Home):", error);
+    // Jika ini error, MONGODB_URI di Vercel Anda salah
+    console.error("DB ERROR (Sponsor Home):", error.message);
     return [];
   }
 }
@@ -30,6 +32,11 @@ export default async function SponsorSection() {
   const sponsors = await getSponsors();
 
   return (
+    /* =============================================
+       STRUKTUR FRONTEND (JSX) ANDA DI BAWAH INI
+       TIDAK SAYA UBAH SAMA SEKALI
+       =============================================
+    */
     <section className="min-h-screen px-8 text-center bg-gray-100 flex flex-col justify-center items-center py-20">
       <div className="container mx-auto">
         {/* Judul sesuai style Anda */}
