@@ -1,5 +1,5 @@
 /* Path: src/components/Header.js */
-/* VERSI FINAL: Dropdown mobile untuk Profile & Sub Team sudah diperbaiki */
+/* VERSI FINAL: Animasi dropdown mobile diganti kembali ke 'block/hidden' agar tidak rusak */
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -15,7 +15,6 @@ export default function Header() {
   
   // --- STATE UNTUK MOBILE ---
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // [PERBAIKAN] State terpisah untuk dropdown di dalam menu mobile
   const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
   const [isMobileSubTeamOpen, setIsMobileSubTeamOpen] = useState(false);
 
@@ -48,8 +47,8 @@ export default function Header() {
     setIsSubTeamOpen(false);
     setIsProfileOpen(false);
     setIsMobileMenuOpen(false);
-    setIsMobileProfileOpen(false); // [PERBAIKAN] Reset state mobile
-    setIsMobileSubTeamOpen(false); // [PERBAIKAN] Reset state mobile
+    setIsMobileProfileOpen(false);
+    setIsMobileSubTeamOpen(false);
   }, [pathname]);
 
   const NavLink = ({ href, children }) => (
@@ -87,8 +86,6 @@ export default function Header() {
   const DesktopNav = () => (
     <div className="hidden md:flex items-center space-x-4">
       <NavLink href="/">HOME</NavLink>
-      
-      {/* DROPDOWN PROFILE (DESKTOP) */}
       <div className="relative" ref={profileRef}>
         <button
           onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -111,8 +108,6 @@ export default function Header() {
           </div>
         )}
       </div>
-
-      {/* DROPDOWN SUB TEAM (DESKTOP) */}
       <div className="relative" ref={subTeamRef}>
         <button
           onClick={() => setIsSubTeamOpen(!isSubTeamOpen)}
@@ -135,7 +130,6 @@ export default function Header() {
           </div>
         )}
       </div>
-
       <NavLink href="/achievement">ACHIEVEMENT</NavLink>
       <NavLink href="/gallery">GALLERY</NavLink>
       <NavLink href="/news">NEWS</NavLink>
@@ -154,26 +148,25 @@ export default function Header() {
         {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
-      {/* [PERBAIKAN] Menu mobile sekarang menggunakan 'transform' untuk slide-down */}
+      {/* --- [PERBAIKAN BESAR] --- */}
+      {/* Mengganti animasi 'transform' kembali ke 'block/hidden' */}
       <div 
-        className={`absolute top-16 left-0 right-0 bg-[#000D81] shadow-lg py-2 z-50 transition-transform duration-300 ease-in-out
-          ${isMobileMenuOpen ? 'translate-y-0' : '-translate-y-full'}
+        className={`absolute top-16 left-0 right-0 bg-[#000D81] shadow-lg py-2 z-50
+          ${isMobileMenuOpen ? 'block' : 'hidden'}
         `}
-        // style={{ display: isMobileMenuOpen ? 'block' : 'none' }} // Alternatif jika transform bermasalah
       >
         
         <NavLink href="/">HOME</NavLink>
         
-        {/* --- [PERBAIKAN] DROPDOWN PROFILE (MOBILE) --- */}
+        {/* DROPDOWN PROFILE (MOBILE) */}
         <div className="px-3 py-2">
           <button
-            onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)} // <-- Menggunakan state mobile
+            onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)}
             className="flex justify-between items-center w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white"
           >
             <span>PROFILE</span>
             <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isMobileProfileOpen ? 'rotate-180' : ''}`} />
           </button>
-          {/* Tampilkan sub-link HANYA jika isMobileProfileOpen true */}
           {isMobileProfileOpen && (
             <div className="pl-4 mt-1 space-y-1">
               {profileLinks.map(link => (
@@ -184,18 +177,16 @@ export default function Header() {
             </div>
           )}
         </div>
-        {/* --- AKHIR PERBAIKAN --- */}
 
-        {/* --- [PERBAIKAN] DROPDOWN SUB TEAM (MOBILE) --- */}
+        {/* DROPDOWN SUB TEAM (MOBILE) */}
         <div className="px-3 py-2">
           <button
-            onClick={() => setIsMobileSubTeamOpen(!isMobileSubTeamOpen)} // <-- Menggunakan state mobile
+            onClick={() => setIsMobileSubTeamOpen(!isMobileSubTeamOpen)}
             className="flex justify-between items-center w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white"
           >
             <span>SUB TEAM</span>
             <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isMobileSubTeamOpen ? 'rotate-180' : ''}`} />
           </button>
-          {/* Tampilkan sub-link HANYA jika isMobileSubTeamOpen true */}
           {isMobileSubTeamOpen && (
             <div className="pl-4 mt-1 space-y-1">
               {subTeams.map(team => (
@@ -206,7 +197,6 @@ export default function Header() {
             </div>
           )}
         </div>
-        {/* --- AKHIR PERBAIKAN --- */}
         
         <NavLink href="/achievement">ACHIEVEMENT</NavLink>
         <NavLink href="/gallery">GALLERY</NavLink>
@@ -230,7 +220,7 @@ export default function Header() {
                   height={40} 
                   style={{objectFit: "contain"}}
                   onError={(e) => (e.currentTarget.style.display = 'none')}
-                  priority={true} // Tambahkan priority untuk logo (LCP)
+                  priority={true}
                 />
               </span>
             </Link>
