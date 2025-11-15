@@ -10,6 +10,7 @@
     "seed:admin": "node scripts/seedAdmin.js"
   },
   "dependencies": {
+    "aos": "^2.3.4",
     "bcryptjs": "^3.0.3",
     "lucide-react": "^0.553.0",
     "mongoose": "^8.19.3",

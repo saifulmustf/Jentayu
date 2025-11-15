@@ -1,5 +1,6 @@
 /* Path: src/app/page.js */
 /* Perbaikan: Memindahkan 'fetch' dari komponen anak, memanggil DB langsung */
+/* Ditambahkan: AOS Animation untuk hero text */
 
 import React from 'react';
 import Link from 'next/link';
@@ -8,12 +9,14 @@ import Image from 'next/image';
 // Import komponen-komponen statis
 import AboutSection from '@/components/home/AboutSection';
 import SubTeamSection from '@/components/home/SubTeamSection';
-// import SponsorSection from '@/components/home/SponsorSection'; // Dihapus dari statis
 
 // Import komponen-komponen DINAMIS
 import LatestNewsSection from '@/components/home/LatestNewsSection';
 import GalleryPreviewSection from '@/components/home/GalleryPreviewSection';
-import SponsorSection from '@/components/home/SponsorSection'; // Diimpor sebagai dinamis
+import SponsorSection from '@/components/home/SponsorSection';
+
+// Import AOS Client Component
+import AosInitializer from '@/components/AosInitializer';
 
 // [PERBAIKAN 1]: Impor Model dan dbConnect
 import dbConnect from '@/lib/dbConnect';
@@ -53,8 +56,11 @@ export default async function Home() {
   return (
     // Kita gunakan <main> sebagai pembungkus utama
     <main className="bg-white">
+      {/* Inisialisasi AOS */}
+      <AosInitializer />
+
       {/* =============================================
-        JSX ANDA (TIDAK DIUBAH)
+        Hero Section dengan AOS Animation
         =============================================
       */}
       <section
@@ -76,6 +82,9 @@ export default async function Home() {
           }}
         >
           <h1
+            data-aos="fade-down"
+            data-aos-duration="1000"
+            data-aos-delay="200"
             style={{
               fontSize: "4rem",
               fontWeight: "900",
@@ -87,6 +96,9 @@ export default async function Home() {
             JENTAYU TEAM
           </h1>
           <p
+            data-aos="fade-up"
+            data-aos-duration="1000"
+            data-aos-delay="400"
             style={{
               fontSize: "1.5rem",
               fontWeight: "700",

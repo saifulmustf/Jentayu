@@ -1,8 +1,8 @@
 /* Path: src/components/gallery/GalleryGrid.js */
 /*
   Perbaikan:
-  1. Mengganti layout grid dari 3 kolom ('lg:grid-cols-3') 
-     menjadi 2 kolom ('md:grid-cols-2') agar foto lebih besar.
+  1. Menggunakan 2 kolom layout (md:grid-cols-2)
+  2. Ditambahkan AOS Animation - setiap 2 foto muncul bersamaan
 */
 
 'use client'; 
@@ -11,37 +11,23 @@ import Image from 'next/image';
 
 export default function GalleryGrid({ items }) {
 
-  // Animasi fade-in (tetap dipertahankan)
-  const animationStyle = `
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .gallery-item {
-      animation: fadeIn 0.5s ease-out forwards;
-      opacity: 0;
-    }
-  `;
-
   return (
-    <>
-      <style jsx>{animationStyle}</style>
-
-      {/* [PERBAIKAN]: Mengganti 'sm:grid-cols-2 lg:grid-cols-3' menjadi 'md:grid-cols-2' */}
-      {/* Ini berarti: 1 kolom di mobile, 2 kolom di tablet dan desktop */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      {items.map((item, index) => {
+        // Hitung delay: setiap 2 foto (index 0-1, 2-3, 4-5, dst) punya delay yang sama
+        // index 0,1 = delay 0ms
+        // index 2,3 = delay 150ms
+        // index 4,5 = delay 300ms
+        const pairIndex = Math.floor(index / 2); // 0,0,1,1,2,2,3,3...
+        const delay = pairIndex * 150;
         
-        {items.map((item, index) => (
+        return (
           <div 
-            key={item._id} 
-            className="gallery-item" // Class untuk animasi
-            style={{ animationDelay: `${index * 100}ms` }} 
+            key={item._id}
+            data-aos="zoom-in"
+            data-aos-duration="600"
+            data-aos-delay={delay}
           >
             {/* Menggunakan 'aspect-video' (persegi panjang) dan 'bg-gray-200' */}
             <div className="relative aspect-video bg-gray-200 rounded-lg shadow-md overflow-hidden">
@@ -49,15 +35,12 @@ export default function GalleryGrid({ items }) {
                 src={item.imageUrl}
                 alt={item.title || "Foto Galeri"}
                 layout="fill"
-                objectFit="cover" // Mengisi kotak
+                objectFit="cover"
               />
             </div>
-
-            {/* Judul dan overlay hover telah dihapus sesuai permintaan */}
-            
           </div>
-        ))}
-      </div>
-    </>
+        );
+      })}
+    </div>
   );
 }

@@ -1,5 +1,6 @@
 /* Path: src/components/home/SponsorSection.js */
 /* Perbaikan: Menghapus 'fetch' dan memanggil DB langsung */
+/* Ditambahkan: AOS Animation */
 
 import Image from 'next/image';
 
@@ -33,24 +34,40 @@ export default async function SponsorSection() {
 
   return (
     /* =============================================
-       STRUKTUR FRONTEND (JSX) ANDA DI BAWAH INI
-       TIDAK SAYA UBAH SAMA SEKALI
+       STRUKTUR FRONTEND (JSX) DENGAN AOS ANIMATION
        =============================================
     */
     <section className="min-h-screen px-8 text-center bg-gray-100 flex flex-col justify-center items-center py-20">
       <div className="container mx-auto">
-        {/* Judul sesuai style Anda */}
-        <h2 className="text-5xl font-extrabold mb-4 text-gray-800">Our Sponsored</h2>
-        <p className="text-xl mb-16 text-gray-500">We are proud to collaborate with our valued partners.</p>
+        {/* Header dengan animasi fade-up */}
+        <h2 
+          className="text-5xl font-extrabold mb-4 text-gray-800"
+          data-aos="fade-up"
+          data-aos-duration="800"
+        >
+          Our Sponsored
+        </h2>
+        <p 
+          className="text-xl mb-16 text-gray-500"
+          data-aos="fade-up"
+          data-aos-duration="800"
+          data-aos-delay="100"
+        >
+          We are proud to collaborate with our valued partners.
+        </p>
         
         {sponsors.length === 0 ? (
           <div className="text-center text-gray-500 py-10">
             <p>Belum ada sponsor yang ditambahkan.</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-x-12 gap-y-8 items-center max-w-6xl mx-auto mt-8">
               {Array(7).fill(0).map((_, index) => (
-                // Placeholder dengan dimensi yang lebih besar
-                // [MODIFIKASI]: Menambah w-40 pada placeholder
-                <div key={index} className="flex justify-center items-center h-32 w-40 mx-auto"> 
+                <div 
+                  key={index} 
+                  className="flex justify-center items-center h-32 w-40 mx-auto"
+                  data-aos="fade-up"
+                  data-aos-duration="600"
+                  data-aos-delay={50 * index}
+                > 
                   <div className="w-full h-full bg-gray-200 animate-pulse rounded-md"></div>
                 </div>
               ))}
@@ -58,16 +75,21 @@ export default async function SponsorSection() {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-x-12 gap-y-8 items-center max-w-6xl mx-auto">
-            {sponsors.map((sponsor) => (
-                // [MODIFIKASI]: Menambah w-40 pada kontainer logo
-                <div key={sponsor._id} className="flex justify-center items-center h-32 w-40 p-2 mx-auto">
+            {sponsors.map((sponsor, index) => (
+                <div 
+                  key={sponsor._id} 
+                  className="flex justify-center items-center h-32 w-40 p-2 mx-auto"
+                  data-aos="fade-up"
+                  data-aos-duration="600"
+                  data-aos-delay={50 * index} // Delay bertahap: 0ms, 50ms, 100ms, 150ms, dst
+                >
                     <Image
                         src={sponsor.logoUrl}
                         alt={sponsor.name}
-                        width={180} // Lebar yang lebih besar
-                        height={96} // Tinggi 96px 
+                        width={180}
+                        height={96}
                         className="grayscale opacity-75 transition duration-300 hover:grayscale-0 hover:opacity-100"
-                        style={{ objectFit: 'contain' }} // Memastikan logo tidak terdistorsi
+                        style={{ objectFit: 'contain' }}
                     />
                 </div>
             ))}

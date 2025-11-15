@@ -1,5 +1,6 @@
 /* Path: src/components/home/GalleryPreviewSection.js */
 /* Perbaikan: Menghapus 'fetch' dan memanggil DB langsung */
+/* Ditambahkan: AOS Animation */
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -32,19 +33,30 @@ export default async function GalleryPreviewSection() {
 
     return (
         /* =============================================
-           STRUKTUR FRONTEND (JSX) ANDA DI BAWAH INI
-           TIDAK SAYA UBAH SAMA SEKALI
+           STRUKTUR FRONTEND (JSX) DENGAN AOS ANIMATION
            =============================================
         */
         <section className="min-h-screen py-20 bg-white flex flex-col justify-center">
             <div className="container mx-auto px-8 max-w-7xl">
-                <h2 className="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-12">
+                {/* Header dengan animasi fade-up */}
+                <h2 
+                    className="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-12"
+                    data-aos="fade-up"
+                    data-aos-duration="800"
+                >
                     Our Gallery
                 </h2>
                 
+                {/* Grid Gallery dengan animasi zoom-in bertahap */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {galleryItems.slice(0, 3).map((item) => (
-                        <div key={item._id} className="relative w-full rounded-lg overflow-hidden shadow-xl transform transition duration-300 hover:shadow-2xl group">
+                    {galleryItems.slice(0, 3).map((item, index) => (
+                        <div 
+                            key={item._id} 
+                            className="relative w-full rounded-lg overflow-hidden shadow-xl transform transition duration-300 hover:shadow-2xl group"
+                            data-aos="zoom-in"
+                            data-aos-duration="800"
+                            data-aos-delay={100 + (index * 150)} // Delay: 100ms, 250ms, 400ms
+                        >
                             <div className="relative w-full h-64"> 
                                 <Image
                                     src={item.imageUrl}
@@ -62,7 +74,14 @@ export default async function GalleryPreviewSection() {
                         </div>
                     ))}
                 </div>
-                <div className="text-center mt-16">
+                
+                {/* Button dengan animasi fade-up */}
+                <div 
+                    className="text-center mt-16"
+                    data-aos="fade-up"
+                    data-aos-duration="800"
+                    data-aos-delay="500"
+                >
                     <Link 
                         href="/gallery" 
                         className="inline-block bg-gray-800 text-white font-bold py-4 px-10 rounded-full shadow-lg hover:bg-gray-700 transition duration-300 transform hover:scale-105"

@@ -1,44 +1,44 @@
 /* Path: src/app/contact/page.js */
-'use client'; // <-- Karena kita akan menggunakan form (useState)
+/* Ditambahkan: AOS Animation */
+'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiMapPin, FiPhone, FiMail, FiInstagram, FiYoutube } from 'react-icons/fi';
 import { FaTiktok } from 'react-icons/fa';
 import { Loader2 } from 'lucide-react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default function ContactUsPage() {
+  
+  // Inisialisasi AOS untuk Client Component
+  useEffect(() => {
+    AOS.init({
+      duration: 750,
+      once: true,
+      offset: 100,
+    });
+  }, []);
   
   // State untuk form
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [status, setStatus] = useState(null); // { type: 'success' | 'error', text: '...' }
+  const [status, setStatus] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fungsi saat form disubmit
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Mencegah reload halaman
+    e.preventDefault();
     setIsSubmitting(true);
     setStatus(null);
 
-    // --- [SIMULASI PENGIRIMAN] ---
-    // Di aplikasi nyata, di sinilah Anda akan memanggil API
-    // untuk mengirim email (Nodemailer, SendGrid, dll.)
-    
-    // Kita akan berpura-pura sukses setelah 2 detik
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // PENTING: Ganti ini dengan pesan error/info
     setStatus({ 
       type: 'info', 
       text: 'Fitur ini masih dalam tahap pengembangan. Silakan hubungi kami via email langsung.' 
     });
-    
-    // Reset form jika (misalnya) sukses
-    // setName('');
-    // setEmail('');
-    // setMessage('');
-    // setStatus({ type: 'success', text: 'Pesan Anda telah terkirim!' });
 
     setIsSubmitting(false);
   };
@@ -46,16 +46,27 @@ export default function ContactUsPage() {
   return (
     <div className="min-h-screen bg-white">
       
-      {/* 1. HERO SECTION (Banner) */}
+      {/* 1. HERO SECTION dengan animasi */}
       <section 
         className="relative py-48 px-8 text-center text-white bg-cover bg-center"
-        // Ganti gambar ini dengan gambar hero untuk Kontak
         style={{ backgroundImage: "url('/contact-hero.png')" }} 
       >
-        <div className="absolute inset-0 bg-black opacity-50"></div> {/* Overlay gelap */}
+        <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative z-10">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-4">CONTACT US</h1>
-          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
+          <h1 
+            className="text-5xl md:text-6xl font-extrabold mb-4"
+            data-aos="fade-down"
+            data-aos-duration="1000"
+            data-aos-delay="200"
+          >
+            CONTACT US
+          </h1>
+          <p 
+            className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto"
+            data-aos="fade-up"
+            data-aos-duration="1000"
+            data-aos-delay="400"
+          >
             Kami siap mendengar dari Anda.
           </p>
         </div>
@@ -66,12 +77,24 @@ export default function ContactUsPage() {
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
             
-            {/* Kolom Kiri: Info Kontak (Diambil dari Footer) */}
+            {/* Kolom Kiri: Info Kontak dengan animasi */}
             <div>
-              <h2 className="text-4xl font-bold text-gray-800 mb-8">Informasi Kontak</h2>
+              <h2 
+                className="text-4xl font-bold text-gray-800 mb-8"
+                data-aos="fade-right"
+                data-aos-duration="800"
+                data-aos-delay="100"
+              >
+                Informasi Kontak
+              </h2>
               
               {/* Alamat */}
-              <div className="flex items-start gap-4 mb-6">
+              <div 
+                className="flex items-start gap-4 mb-6"
+                data-aos="fade-right"
+                data-aos-duration="600"
+                data-aos-delay="200"
+              >
                 <FiMapPin size={24} className="mt-1 text-indigo-600 flex-shrink-0" />
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">Alamat</h3>
@@ -84,7 +107,12 @@ export default function ContactUsPage() {
               </div>
               
               {/* Telepon */}
-              <div className="flex items-center gap-4 mb-6">
+              <div 
+                className="flex items-center gap-4 mb-6"
+                data-aos="fade-right"
+                data-aos-duration="600"
+                data-aos-delay="300"
+              >
                 <FiPhone size={20} className="text-indigo-600" />
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">Telepon</h3>
@@ -93,7 +121,12 @@ export default function ContactUsPage() {
               </div>
 
               {/* Email */}
-              <div className="flex items-center gap-4 mb-10">
+              <div 
+                className="flex items-center gap-4 mb-10"
+                data-aos="fade-right"
+                data-aos-duration="600"
+                data-aos-delay="400"
+              >
                 <FiMail size={20} className="text-indigo-600" />
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">Email</h3>
@@ -102,29 +135,65 @@ export default function ContactUsPage() {
               </div>
               
               {/* Sosial Media */}
-              <h3 className="text-2xl font-bold text-gray-800 mb-6">Ikuti Kami</h3>
+              <h3 
+                className="text-2xl font-bold text-gray-800 mb-6"
+                data-aos="fade-right"
+                data-aos-duration="600"
+                data-aos-delay="500"
+              >
+                Ikuti Kami
+              </h3>
               <div className="flex flex-col space-y-8">
-                <a href="https://instagram.com/undipjentayu" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-lg text-gray-700 hover:text-indigo-600 transition-colors">
+                <a 
+                  href="https://instagram.com/undipjentayu" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-4 text-lg text-gray-700 hover:text-indigo-600 transition-colors"
+                  data-aos="fade-right"
+                  data-aos-duration="600"
+                  data-aos-delay="600"
+                >
                   <FiInstagram size={24} /> <span>undipjentayu</span>
                 </a>
-                <a href="https://youtube.com/@jentayuuundip7239" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-lg text-gray-700 hover:text-indigo-600 transition-colors">
+                <a 
+                  href="https://youtube.com/@jentayuuundip7239" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-4 text-lg text-gray-700 hover:text-indigo-600 transition-colors"
+                  data-aos="fade-right"
+                  data-aos-duration="600"
+                  data-aos-delay="700"
+                >
                   <FiYoutube size={24} /> <span>jentayuuundip7239</span>
                 </a>
-                <a href="https://tiktok.com/@jentayu.undip" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-lg text-gray-700 hover:text-indigo-600 transition-colors">
+                <a 
+                  href="https://tiktok.com/@jentayu.undip" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-4 text-lg text-gray-700 hover:text-indigo-600 transition-colors"
+                  data-aos="fade-right"
+                  data-aos-duration="600"
+                  data-aos-delay="800"
+                >
                   <FaTiktok size={24} /> <span>jentayu.undip</span>
                 </a>
               </div>
             </div>
 
-            {/* Kolom Kanan: Formulir Kontak */}
-            <div className="bg-white p-8 rounded-lg shadow-xl border border-gray-100">
+            {/* Kolom Kanan: Formulir Kontak dengan animasi */}
+            <div 
+              className="bg-white p-8 rounded-lg shadow-xl border border-gray-100"
+              data-aos="fade-left"
+              data-aos-duration="800"
+              data-aos-delay="200"
+            >
               <h2 className="text-4xl font-bold text-gray-800 mb-8">Kirim Pesan</h2>
 
               {status && (
                 <div className={`p-4 mb-4 rounded-md text-sm ${
                   status.type === 'success' ? 'bg-green-100 text-green-700' : 
                   status.type === 'error' ? 'bg-red-100 text-red-700' : 
-                  'bg-blue-100 text-blue-700' // Tipe 'info'
+                  'bg-blue-100 text-blue-700'
                 }`}>
                   {status.text}
                 </div>

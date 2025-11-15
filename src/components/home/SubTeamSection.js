@@ -1,5 +1,5 @@
 /* Path: src/components/home/SubTeamSection.js */
-/* Kode UI Anda - sudah dibersihkan dari spasi rusak */
+/* Kode UI dengan AOS Animation */
 
 import React from 'react';
 import Link from 'next/link';
@@ -14,17 +14,34 @@ export default function SubTeamSection() {
 
   return (
     <section className="min-h-screen px-8 text-center bg-white flex flex-col justify-center items-center">
-      <div className="w-full max-w-5xl"> {/* Kontrol lebar maksimum konten */}
-        <h2 className="text-6xl font-extrabold mb-3 text-gray-800">
+      <div className="w-full max-w-5xl">
+        {/* Header dengan animasi fade-up */}
+        <h2 
+          className="text-6xl font-extrabold mb-3 text-gray-800"
+          data-aos="fade-up"
+          data-aos-duration="800"
+        >
           Our Robot
         </h2>
-        <p className="text-xl mb-16 text-gray-500">
+        <p 
+          className="text-xl mb-16 text-gray-500"
+          data-aos="fade-up"
+          data-aos-duration="800"
+          data-aos-delay="100"
+        >
           Stop Dreaming, Start Flying!
         </p>
 
         <div className="flex flex-col md:flex-row justify-center items-center gap-x-24 gap-y-12">
-          {teams.map((team) => (
-            <Link href={team.link} key={team.name} className="group text-center">
+          {teams.map((team, index) => (
+            <Link 
+              href={team.link} 
+              key={team.name} 
+              className="group text-center"
+              data-aos="zoom-in"
+              data-aos-duration="800"
+              data-aos-delay={200 + (index * 150)} // Delay bertahap: 200ms, 350ms, 500ms
+            >
               {/* Gambar diperbesar */}
               <div className="w-64 h-64 relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                 <Image
