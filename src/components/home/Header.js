@@ -1,5 +1,6 @@
-/* Path: src/components/home/Header.js */
+/* Path: src/components/Header.js */
 /* Modifikasi: Menambahkan Dropdown untuk Profile */
+/* Versi ini sudah dibersihkan dari 'spasi tersembunyi' ( ) */
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -27,7 +28,10 @@ export default function Header() {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setIsProfileOpen(false); // <-- Handler baru
       }
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+      // Modifikasi: Cek target, jangan tutup menu jika yang diklik adalah tombol hamburger
+      if (mobileMenuRef.current && 
+          !mobileMenuRef.current.contains(event.target) &&
+          !event.target.closest('button[aria-controls="mobile-menu"]')) {
         setIsMobileMenuOpen(false);
       }
     }
@@ -43,20 +47,22 @@ export default function Header() {
   }, [pathname]);
 
   const NavLink = ({ href, children }) => (
-    <Link href={href}>
-      <span className={`px-3 py-2 rounded-md text-sm font-medium ${
+    <Link
+      href={href}
+      className={`block md:inline-block px-3 py-2 rounded-md text-sm font-medium ${
         pathname === href ? 'text-white bg-white/10' : 'text-gray-300 hover:text-white'
-      } transition-colors`}>
-        {children}
-      </span>
+      } transition-colors`}
+    >
+      {children}
     </Link>
   );
 
   const DropdownLink = ({ href, children }) => (
-    <Link href={href}>
-      <span className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100">
-        {children}
-      </span>
+    <Link
+      href={href}
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100"
+    >
+      {children}
     </Link>
   );
 
@@ -140,12 +146,14 @@ export default function Header() {
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         className="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-white focus:outline-none"
+        aria-controls="mobile-menu" // Penting untuk aksesibilitas
       >
         {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
       {isMobileMenuOpen && (
         <div className="absolute top-16 left-0 right-0 bg-[#000D81] shadow-lg py-2 z-50">
+          
           <NavLink href="/">HOME</NavLink>
           
           {/* --- [PERUBAHAN] Sub Link Profile di Mobile --- */}
@@ -153,10 +161,8 @@ export default function Header() {
             <span className="text-sm font-medium text-gray-400">PROFILE</span>
             <div className="pl-4 mt-1 space-y-1">
               {profileLinks.map(link => (
-                <Link key={link.href} href={link.href}>
-                  <span className="block px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white">
-                    {link.title}
-                  </span>
+                <Link key={link.href} href={link.href} className="block px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white">
+                  {link.title}
                 </Link>
               ))}
             </div>
@@ -168,10 +174,8 @@ export default function Header() {
             <span className="text-sm font-medium text-gray-400">SUB TEAM</span>
             <div className="pl-4 mt-1 space-y-1">
               {subTeams.map(team => (
-                <Link key={team.id} href={`/sub-team/${team.id}`}>
-                  <span className="block px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white">
-                    {team.title}
-                  </span>
+                <Link key={team.id} href={`/sub-team/${team.id}`} className="block px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white">
+                  {team.title}
                 </Link>
               ))}
             </div>
@@ -198,8 +202,8 @@ export default function Header() {
                   alt="Jentayu Logo" 
                   width={150} 
                   height={40} 
-                  objectFit="contain"
-                  onError={(e) => e.currentTarget.style.display = 'none'}
+                  style={{objectFit: "contain"}} // Ganti 'objectFit' menjadi 'style'
+                  onError={(e) => (e.currentTarget.style.display = 'none')}
                 />
               </span>
             </Link>
