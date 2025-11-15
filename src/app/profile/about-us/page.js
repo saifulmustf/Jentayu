@@ -1,14 +1,16 @@
 /* Path: src/app/profile/about-us/page.js */
+/* PERBAIKAN FINAL: Menghapus typo '</D>' dan '</d'iv>' */
 
-import { Eye, Rocket, Target } from 'lucide-react';
+import { Target } from 'lucide-react';
+import Image from 'next/image';
 
 export default function AboutUsPage() {
   return (
     <div className="bg-white min-h-screen">
-      {/* Header Halaman */}
+      {/* Header Halaman (Tetap Sama) */}
       <section 
-        className="py-32 px-8 text-center text-white" 
-        style={{ backgroundImage: "url('/about-hero.png')" }} // Warna biru gelap
+        className="py-32 px-8 text-center text-white bg-cover bg-center" 
+        style={{ backgroundImage: "url('/about-hero.png')" }} 
       >
         <h1 className="text-5xl md:text-6xl font-extrabold mb-4">About Jentayu</h1>
         <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
@@ -18,54 +20,132 @@ export default function AboutUsPage() {
 
       {/* Konten Utama */}
       <section className="py-20 px-8">
-        <div className="container mx-auto max-w-4xl">
+        <div className="container mx-auto max-w-6xl">
           
-          {/* Sejarah Singkat */}
-          <div className="mb-20">
+          {/* [REVISI] Lebar section Sejarah disamakan */}
+          <div className="mb-20"> 
+          {/* 'max-w-4xl mx-auto' dihapus dari div ini */}
+
             <h2 className="text-4xl font-bold text-gray-800 mb-6 text-center">Sejarah Kami</h2>
-            <p className="text-lg text-gray-700 leading-relaxed text-justify space-y-4">
-              <span>
-                Jentayu (UAV Research Team) Universitas Diponegoro adalah sebuah tim riset yang berfokus pada pengembangan teknologi Pesawat Terbang Tanpa Awak atau Unmanned Aerial Vehicle (UAV). Dibentuk oleh sekelompok mahasiswa berbakat dari berbagai disiplin ilmu, Jentayu bertujuan untuk berinovasi dan berkompetisi di kancah nasional maupun internasional.
-              </span>
-              <span>
-                Kami mendedikasikan diri untuk memajukan teknologi kedirgantaraan, menerapkan solusi cerdas untuk tantangan dunia nyata, dan mengharumkan nama almamater melalui pencapaian di bidang teknologi UAV.
-              </span>
-            </p>
+            {/* [REVISI] Konten paragraf diperpanjang */}
+            <div className="text-lg text-gray-700 leading-relaxed text-justify space-y-6">
+              <p>
+                Jentayu Team was founded in 2017 by students of Diponegoro University. Initially, this team started as an Aeromodelling Club at Department of Mechanical Engineering but has since evolved into the university's leading autonomous Unmanned Aerial Vehicle (UAV) team. The Jentayu Team is located at Diponegoro University, Semarang, Central Java, Indonesia. This team was formed with a focus on innovation and breakthroughs in aeromodelling things by developing efficiently designed UAV. Operating in the appropiate rules of competition is the community’s goal.
+              </p>
+            </div>
           </div>
 
-          {/* Visi & Misi dalam Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* --- Visi & Misi Sesuai UI Baru --- */}
+          <div className="mb-20">
+            <h2 className="text-4xl font-bold text-gray-800 mb-12 text-center">Visi dan Misi</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
+              
+              {/* Kolom Kiri: Logo */}
+              <div className="md:col-span-1 flex flex-col items-center">
+                <div className="relative w-64 h-64">
+                  <Image 
+                    src="/jentayu-logo.png" 
+                    alt="Logo Emblem Jentayu"
+                    fill
+                    style={{ objectFit: 'contain' }}
+                  />
+                </div>
+                <h3 className="text-3xl font-bold text-gray-800 mt-4">Jentayu UNDIP</h3>
+              </div>
+
+              {/* Kolom Kanan: Visi & Misi */}
+              <div className="md:col-span-2 flex flex-col gap-8">
+                {/* Kartu Visi */}
+                <div 
+                  className="p-8 rounded-lg shadow-lg"
+                  style={{ backgroundColor: '#000D81', color: 'white' }}
+                >
+                  <h3 className="text-3xl font-bold mb-4">Visi</h3>
+                  <p className="text-lg text-gray-200 text-justify">
+                    Jentayu UNDIP 2025 as a close, collaborative, and outstanding organization that serves as a platform for research and innovation development in the field of UAVs
+                  </p>
+                </div>
+                {/* Kartu Misi */}
+                <div 
+                  className="p-8 rounded-lg shadow-lg"
+                  style={{ backgroundColor: '#000D81', color: 'white' }}
+                >
+                  <h3 className="text-3xl font-bold mb-4">Misi</h3>
+                  <ul className="list-decimal list-outside text-gray-200 ml-4 space-y-3 text-lg text-justify">
+                    <li>To foster an internal spirit of pride, professionalism, and solidarity among all members of Jentayu UNDIP.</li>
+                    <li>To enhance the capacity and competence of members through training, mentoring, and research activities that are adaptive to UAV technological advancements.</li>
+                    <li>To establish collaborative networks with internal and external partners to strengthen the UAV research ecosystem within Jentayu UNDIP.</li>
+                    <li>To implement a structured and sustainable research system aimed at producing scientific works, innovations, and UAV products that are applicable and competitive.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* --- AKHIR Visi & Misi --- */}
+
+          {/* --- [SECTION BARU] Filosofi Logo --- */}
+          <section className="pt-20 border-t">
+            <h2 className="text-4xl font-bold text-gray-800 mb-12 text-center">Filosofi Logo</h2>
             
-            {/* Visi */}
-            <div className="bg-gray-50 p-6 rounded-lg shadow-md border-t-4 border-indigo-500">
-              <Eye className="w-12 h-12 text-indigo-600 mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Visi</h3>
-              <p className="text-gray-700">
-                Menjadi pusat unggulan riset dan pengembangan teknologi Unmanned Aerial Vehicle (UAV) yang inovatif dan berdaya saing global.
-              </p>
+            {/* Logo Tengah */}
+            <div className="flex justify-center mb-12">
+              <div className="relative w-52 h-52 p-4 border-4 border-[#000D81] rounded-full">
+                <Image
+                  src="/jentayu-logo.png" 
+                  alt="Logo Emblem Jentayu"
+                  fill
+                  style={{ objectFit: 'contain' }}
+                />
+              </div>
             </div>
 
-            {/* Misi */}
-            <div className="bg-gray-50 p-6 rounded-lg shadow-md border-t-4 border-indigo-500">
-              <Rocket className="w-12 h-12 text-indigo-600 mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Misi</h3>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>Melakukan riset berkelanjutan di bidang teknologi UAV.</li>
-                <li>Mengembangkan prototipe UAV untuk berbagai aplikasi.</li>
-                <li>Berpartisipasi aktif dalam kompetisi UAV nasional dan internasional.</li>
-              </ul>
+            {/* Grid 3 Kolom */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+              {/* Card Filosofi 1 */}
+              <div className="p-6 rounded-lg shadow-lg" style={{ backgroundColor: '#000D81', color: 'white' }}>
+                <h3 className="text-2xl font-bold mb-3 text-center">Siluet Gambar Pesawat</h3>
+                <p className="text-gray-200 text-justify">
+                  Menggambarkan fokus kita terhadap pengembangan teknologi berbasis kedirgantaraan.
+                </p>
+              </div>
+              {/* Card Filosofi 2 */}
+              <div className="p-6 rounded-lg shadow-lg" style={{ backgroundColor: '#000D81', color: 'white' }}>
+                <h3 className="text-2xl font-bold mb-3 text-center">Sayap Pesawat</h3>
+                <p className="text-gray-200 text-justify">
+                  Sayap pesawat yang terlihat seperti kerangka yang saling menyatu, dan ada tulisan "Jentayu". Menggambarkan keberhasilan dicapai dengan semangat kesatuan antar tim Jentayu.
+                </p>
+              </div>
+              {/* Card Filosofi 3 */}
+              <div className="p-6 rounded-lg shadow-lg" style={{ backgroundColor: '#000D81', color: 'white' }}>
+                <h3 className="text-2xl font-bold mb-3 text-center">Arah Terbang Pesawat</h3>
+                {/* [PERBAIKAN] Typo '</D>' dihapus */}
+                <p className="text-gray-200 text-justify">
+                  Arah terbang pesawat yang selalu ke atas yang menggambarkan cita-cita dan fokus tim untuk selalu mengarah ke yang lebih baik dengan prestasi yang tinggi.
+                </p>
+              </div>
             </div>
 
-            {/* Tujuan */}
-            <div className="bg-gray-50 p-6 rounded-lg shadow-md border-t-4 border-indigo-500">
-              <Target className="w-12 h-12 text-indigo-600 mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Tujuan</h3>
-              <p className="text-gray-700">
-                Menghasilkan inovasi teknologi yang bermanfaat bagi masyarakat dan industri, serta mencetak talenta-talenta muda yang ahli di bidang kedirgantaraan.
-              </p>
+            {/* Grid 2 Kolom (Centered) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:w-2/3 mx-auto">
+              {/* Card Filosofi 4 */}
+              <div className="p-6 rounded-lg shadow-lg" style={{ backgroundColor: '#000D81', color: 'white' }}>
+                <h3 className="text-2xl font-bold mb-3 text-center">Warna Biru</h3>
+                {/* [PERBAIKAN] Typo '</d'iv>' dihapus */}
+                <p className="text-gray-200 text-justify">
+                  Warna biru menggambarkan kegagahan dan kemegahan Jentayu saat berada di langit.
+                </p>
+              </div>
+              {/* Card Filosofi 5 */}
+              <div className="p-6 rounded-lg shadow-lg" style={{ backgroundColor: '#000D81', color: 'white' }}>
+                <h3 className="text-2xl font-bold mb-3 text-center">Lingkaran</h3>
+                <p className="text-gray-200 text-justify">
+                  Lingkaran menggambarkan kebulatan tekad dan kesatuan hati tim Jentayu untuk mencapai cita-cita.
+                </p>
+              </div>
             </div>
+          </section>
+          {/* --- AKHIR SECTION Filosofi Logo --- */}
 
-          </div>
         </div>
       </section>
     </div>
