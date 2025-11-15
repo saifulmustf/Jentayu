@@ -1,5 +1,5 @@
 /* Path: src/components/Header.js */
-/* VERSI FINAL: Animasi dropdown mobile diganti kembali ke 'block/hidden' agar tidak rusak */
+/* PERBAIKAN: Meluruskan 'PROFILE' & 'SUB TEAM' di mobile */
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -148,8 +148,6 @@ export default function Header() {
         {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
-      {/* --- [PERBAIKAN BESAR] --- */}
-      {/* Mengganti animasi 'transform' kembali ke 'block/hidden' */}
       <div 
         className={`absolute top-16 left-0 right-0 bg-[#000D81] shadow-lg py-2 z-50
           ${isMobileMenuOpen ? 'block' : 'hidden'}
@@ -158,17 +156,23 @@ export default function Header() {
         
         <NavLink href="/">HOME</NavLink>
         
-        {/* DROPDOWN PROFILE (MOBILE) */}
-        <div className="px-3 py-2">
-          <button
-            onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)}
-            className="flex justify-between items-center w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white"
-          >
-            <span>PROFILE</span>
-            <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isMobileProfileOpen ? 'rotate-180' : ''}`} />
-          </button>
+        {/* --- [PERBAIKAN] DROPDOWN PROFILE (MOBILE) --- */}
+        <div>
+          {/* Wrapper ini meniru padding NavLink */}
+          <div className="flex justify-between items-center px-3 py-2">
+            <span className="text-sm font-medium text-gray-300">
+              PROFILE
+            </span>
+            <button
+              onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)}
+              className="p-1 rounded-md hover:bg-white/10"
+            >
+              <ChevronDown className={`w-5 h-5 text-gray-300 transition-transform ${isMobileProfileOpen ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+          {/* Sub-menu */}
           {isMobileProfileOpen && (
-            <div className="pl-4 mt-1 space-y-1">
+            <div className="pl-8 mt-1 space-y-1">
               {profileLinks.map(link => (
                 <Link key={link.href} href={link.href} className="block px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white">
                   {link.title}
@@ -177,18 +181,25 @@ export default function Header() {
             </div>
           )}
         </div>
+        {/* --- AKHIR PERBAIKAN --- */}
 
-        {/* DROPDOWN SUB TEAM (MOBILE) */}
-        <div className="px-3 py-2">
-          <button
-            onClick={() => setIsMobileSubTeamOpen(!isMobileSubTeamOpen)}
-            className="flex justify-between items-center w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white"
-          >
-            <span>SUB TEAM</span>
-            <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isMobileSubTeamOpen ? 'rotate-180' : ''}`} />
-          </button>
+        {/* --- [PERBAIKAN] DROPDOWN SUB TEAM (MOBILE) --- */}
+        <div>
+          {/* Wrapper ini meniru padding NavLink */}
+          <div className="flex justify-between items-center px-3 py-2">
+            <span className="text-sm font-medium text-gray-300">
+              SUB TEAM
+            </span>
+            <button
+              onClick={() => setIsMobileSubTeamOpen(!isMobileSubTeamOpen)}
+              className="p-1 rounded-md hover:bg-white/10"
+            >
+              <ChevronDown className={`w-5 h-5 text-gray-300 transition-transform ${isMobileSubTeamOpen ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+          {/* Sub-menu */}
           {isMobileSubTeamOpen && (
-            <div className="pl-4 mt-1 space-y-1">
+            <div className="pl-8 mt-1 space-y-1">
               {subTeams.map(team => (
                 <Link key={team.id} href={`/sub-team/${team.id}`} className="block px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white">
                   {team.title}
@@ -197,6 +208,7 @@ export default function Header() {
             </div>
           )}
         </div>
+        {/* --- AKHIR PERBAIKAN --- */}
         
         <NavLink href="/achievement">ACHIEVEMENT</NavLink>
         <NavLink href="/gallery">GALLERY</NavLink>
