@@ -57,7 +57,7 @@ export default function Footer() {
               <FiInstagram size={24} />
               <span>undipjentayu</span>
             </a>
-            <a href="https://youtube.com/@jentayuuundip7239" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-lg hover:text-gray-900 transition-colors">
+            <a href="https://www.youtube.com/@jentayuundip7239" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-lg hover:text-gray-900 transition-colors">
               <FiYoutube size={24} />
               <span>jentayuuundip7239</span>
             </a>
