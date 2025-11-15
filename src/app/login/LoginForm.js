@@ -3,7 +3,7 @@
 
 'use client'; 
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // <-- 1. Import useEffect
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation'; // <-- Aman di sini
 import Image from 'next/image';
@@ -13,13 +13,26 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   
+  // --- [PERBAIKAN 1: State Error Lokal] ---
+  // Kita akan gunakan state ini untuk menyimpan pesan error
+  const [error, setError] = useState(null);
+  
   const router = useRouter();
   const searchParams = useSearchParams(); // <-- Ini sekarang aman
-  const error = searchParams.get('error');
+  const callbackError = searchParams.get('error'); // Error dari URL
+
+  // Cek error dari URL (misal: "Password salah") saat halaman dimuat
+  useEffect(() => {
+    if (callbackError) {
+      setError(decodeURIComponent(callbackError));
+    }
+  }, [callbackError]);
+  // --- [AKHIR PERBAIKAN 1] ---
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null); // <-- 2. Reset error setiap kali submit
 
     const result = await signIn('credentials', {
       redirect: false, 
@@ -31,7 +44,12 @@ export default function LoginForm() {
 
     if (result.ok) {
       router.push('/admin'); // Redirect ke dashboard
-    } 
+    } else {
+      // --- [PERBAIKAN 2: Set Error Lokal] ---
+      // Jika login gagal, set state error dengan pesan dari next-auth
+      setError(result.error || 'Login gagal. Coba lagi.');
+      // --- [AKHIR PERBAIKAN 2] ---
+    }
   };
 
   return (
@@ -39,11 +57,12 @@ export default function LoginForm() {
     <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-sm">
       <div className="flex justify-center mb-6">
         <Image 
-          src="/jentayu-logo.png" 
+          src="/jentayu-logo.png" // Pastikan ini ada di /public/jentayu-logo.png
           alt="Jentayu Logo" 
           width={200} 
           height={53}
           style={{ objectFit: "contain" }}
+          priority // Tambahkan priority agar logo cepat dimuat
         />
       </div>
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
@@ -53,7 +72,7 @@ export default function LoginForm() {
       {/* Tampilkan pesan error jika ada */}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-          <span className="block sm:inline">{decodeURIComponent(error)}</span>
+          <span className="block sm:inline">{error}</span>
         </div>
       )}
 
@@ -68,7 +87,14 @@ export default function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            // --- [PERBAIKAN 3: Tanda Error Merah] ---
+            className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm text-gray-900 focus:outline-none 
+              ${error ? 
+                'border-red-500 focus:ring-red-500 focus:border-red-500' : 
+                'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+              }
+            `}
+            // --- [AKHIR PERBAIKAN 3] ---
           />
         </div>
         <div>
@@ -81,7 +107,14 @@ export default function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            // --- [PERBAIKAN 4: Tanda Error Merah] ---
+            className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm text-gray-900 focus:outline-none 
+              ${error ? 
+                'border-red-500 focus:ring-red-500 focus:border-red-500' : 
+                'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+              }
+            `}
+            // --- [AKHIR PERBAIKAN 4] ---
           />
         </div>
         <button
