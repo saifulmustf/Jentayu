@@ -159,6 +159,7 @@ export default function Header() {
         className={`absolute top-16 left-0 right-0 bg-[#000D81] shadow-lg py-2 z-50 transition-transform duration-300 ease-in-out
           ${isMobileMenuOpen ? 'translate-y-0' : '-translate-y-full'}
         `}
+        // style={{ display: isMobileMenuOpen ? 'block' : 'none' }} // Alternatif jika transform bermasalah
       >
         
         <NavLink href="/">HOME</NavLink>
