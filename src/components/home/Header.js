@@ -1,6 +1,5 @@
 /* Path: src/components/Header.js */
-/* Modifikasi: Menambahkan Dropdown untuk Profile */
-/* Versi ini sudah dibersihkan dari 'spasi tersembunyi' ( ) */
+/* VERSI FINAL: Dropdown mobile untuk Profile & Sub Team sudah diperbaiki */
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -10,14 +9,20 @@ import { usePathname } from 'next/navigation';
 import { ChevronDown, Menu, X } from 'lucide-react';
 
 export default function Header() {
+  // --- STATE UNTUK DESKTOP ---
   const [isSubTeamOpen, setIsSubTeamOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false); // <-- State baru
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  
+  // --- STATE UNTUK MOBILE ---
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // [PERBAIKAN] State terpisah untuk dropdown di dalam menu mobile
+  const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
+  const [isMobileSubTeamOpen, setIsMobileSubTeamOpen] = useState(false);
+
   const pathname = usePathname();
   
-  // Ref untuk menutup dropdown saat klik di luar
   const subTeamRef = useRef(null);
-  const profileRef = useRef(null); // <-- Ref baru
+  const profileRef = useRef(null);
   const mobileMenuRef = useRef(null);
 
   useEffect(() => {
@@ -26,9 +31,8 @@ export default function Header() {
         setIsSubTeamOpen(false);
       }
       if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setIsProfileOpen(false); // <-- Handler baru
+        setIsProfileOpen(false);
       }
-      // Modifikasi: Cek target, jangan tutup menu jika yang diklik adalah tombol hamburger
       if (mobileMenuRef.current && 
           !mobileMenuRef.current.contains(event.target) &&
           !event.target.closest('button[aria-controls="mobile-menu"]')) {
@@ -37,13 +41,15 @@ export default function Header() {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [subTeamRef, profileRef, mobileMenuRef]); // <-- Ref baru ditambahkan
+  }, [subTeamRef, profileRef, mobileMenuRef]);
 
-  // Tutup menu saat navigasi
+  // Tutup semua menu saat navigasi halaman
   useEffect(() => {
     setIsSubTeamOpen(false);
-    setIsProfileOpen(false); // <-- State baru ditambahkan
+    setIsProfileOpen(false);
     setIsMobileMenuOpen(false);
+    setIsMobileProfileOpen(false); // [PERBAIKAN] Reset state mobile
+    setIsMobileSubTeamOpen(false); // [PERBAIKAN] Reset state mobile
   }, [pathname]);
 
   const NavLink = ({ href, children }) => (
@@ -72,7 +78,6 @@ export default function Header() {
     { id: 'vtol', title: 'VTOL' },
   ];
 
-  // --- [PERUBAHAN] Daftar Link Profile ---
   const profileLinks = [
     { href: '/profile/about-us', title: 'About Us' },
     { href: '/profile/board-of-directors', title: 'Board of Directors' },
@@ -83,7 +88,7 @@ export default function Header() {
     <div className="hidden md:flex items-center space-x-4">
       <NavLink href="/">HOME</NavLink>
       
-      {/* --- [PERUBAHAN] DROPDOWN PROFILE --- */}
+      {/* DROPDOWN PROFILE (DESKTOP) */}
       <div className="relative" ref={profileRef}>
         <button
           onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -106,9 +111,8 @@ export default function Header() {
           </div>
         )}
       </div>
-      {/* --- AKHIR DROPDOWN PROFILE --- */}
 
-      {/* --- DROPDOWN SUB TEAM --- */}
+      {/* DROPDOWN SUB TEAM (DESKTOP) */}
       <div className="relative" ref={subTeamRef}>
         <button
           onClick={() => setIsSubTeamOpen(!isSubTeamOpen)}
@@ -131,7 +135,6 @@ export default function Header() {
           </div>
         )}
       </div>
-      {/* --- AKHIR DROPDOWN SUB TEAM --- */}
 
       <NavLink href="/achievement">ACHIEVEMENT</NavLink>
       <NavLink href="/gallery">GALLERY</NavLink>
@@ -146,19 +149,31 @@ export default function Header() {
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         className="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-white focus:outline-none"
-        aria-controls="mobile-menu" // Penting untuk aksesibilitas
+        aria-controls="mobile-menu"
       >
         {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
-      {isMobileMenuOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-[#000D81] shadow-lg py-2 z-50">
-          
-          <NavLink href="/">HOME</NavLink>
-          
-          {/* --- [PERUBAHAN] Sub Link Profile di Mobile --- */}
-          <div className="px-3 py-2">
-            <span className="text-sm font-medium text-gray-400">PROFILE</span>
+      {/* [PERBAIKAN] Menu mobile sekarang menggunakan 'transform' untuk slide-down */}
+      <div 
+        className={`absolute top-16 left-0 right-0 bg-[#000D81] shadow-lg py-2 z-50 transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? 'translate-y-0' : '-translate-y-full'}
+        `}
+      >
+        
+        <NavLink href="/">HOME</NavLink>
+        
+        {/* --- [PERBAIKAN] DROPDOWN PROFILE (MOBILE) --- */}
+        <div className="px-3 py-2">
+          <button
+            onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)} // <-- Menggunakan state mobile
+            className="flex justify-between items-center w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white"
+          >
+            <span>PROFILE</span>
+            <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isMobileProfileOpen ? 'rotate-180' : ''}`} />
+          </button>
+          {/* Tampilkan sub-link HANYA jika isMobileProfileOpen true */}
+          {isMobileProfileOpen && (
             <div className="pl-4 mt-1 space-y-1">
               {profileLinks.map(link => (
                 <Link key={link.href} href={link.href} className="block px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white">
@@ -166,12 +181,21 @@ export default function Header() {
                 </Link>
               ))}
             </div>
-          </div>
-          {/* --- AKHIR PERUBAHAN --- */}
+          )}
+        </div>
+        {/* --- AKHIR PERBAIKAN --- */}
 
-          {/* Sub Team di Mobile */}
-          <div className="px-3 py-2">
-            <span className="text-sm font-medium text-gray-400">SUB TEAM</span>
+        {/* --- [PERBAIKAN] DROPDOWN SUB TEAM (MOBILE) --- */}
+        <div className="px-3 py-2">
+          <button
+            onClick={() => setIsMobileSubTeamOpen(!isMobileSubTeamOpen)} // <-- Menggunakan state mobile
+            className="flex justify-between items-center w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white"
+          >
+            <span>SUB TEAM</span>
+            <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isMobileSubTeamOpen ? 'rotate-180' : ''}`} />
+          </button>
+          {/* Tampilkan sub-link HANYA jika isMobileSubTeamOpen true */}
+          {isMobileSubTeamOpen && (
             <div className="pl-4 mt-1 space-y-1">
               {subTeams.map(team => (
                 <Link key={team.id} href={`/sub-team/${team.id}`} className="block px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white">
@@ -179,14 +203,15 @@ export default function Header() {
                 </Link>
               ))}
             </div>
-          </div>
-          
-          <NavLink href="/achievement">ACHIEVEMENT</NavLink>
-          <NavLink href="/gallery">GALLERY</NavLink>
-          <NavLink href="/news">NEWS</NavLink>
-          <NavLink href="/contact">CONTACT US</NavLink>
+          )}
         </div>
-      )}
+        {/* --- AKHIR PERBAIKAN --- */}
+        
+        <NavLink href="/achievement">ACHIEVEMENT</NavLink>
+        <NavLink href="/gallery">GALLERY</NavLink>
+        <NavLink href="/news">NEWS</NavLink>
+        <NavLink href="/contact">CONTACT US</NavLink>
+      </div>
     </div>
   );
 
@@ -202,8 +227,9 @@ export default function Header() {
                   alt="Jentayu Logo" 
                   width={150} 
                   height={40} 
-                  style={{objectFit: "contain"}} // Ganti 'objectFit' menjadi 'style'
+                  style={{objectFit: "contain"}}
                   onError={(e) => (e.currentTarget.style.display = 'none')}
+                  priority={true} // Tambahkan priority untuk logo (LCP)
                 />
               </span>
             </Link>
