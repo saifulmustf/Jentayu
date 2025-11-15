@@ -5,17 +5,19 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { usePathname } from 'next/navigation';
 
-// Import komponen UI utama
-import Header from '@/components/home/Header'; // Asumsi nama file Header Anda
-import Footer from '@/components/common/Footer'; // <-- Import Footer BARU
+// --- [TAMBAHAN] Import SessionProvider ---
+import { SessionProvider } from 'next-auth/react';
+
+// Import komponen UI utama Anda (Ini kode Anda)
+import Header from '@/components/home/Header';
+import Footer from '@/components/common/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
-// (Metadata statis bisa ditambahkan lagi jika perlu)
-// export const metadata = {
-//   title: 'Jentayu Team Undip',
-//   description: 'UAV Research Team Diponegoro University',
-// };
+/* Catatan: 'export const metadata' tidak berfungsi di file 'use client'.
+  Anda harus memindahkannya ke 'page.js' individual jika diperlukan.
+  Kita hapus komentar metadata di sini agar bersih.
+*/
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -25,16 +27,21 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         
-        {/* Header hanya tampil jika BUKAN halaman admin */}
-        {!isAdminPage && <Header />}
+        {/* --- [TAMBAHAN] SessionProvider membungkus semuanya --- */}
+        <SessionProvider>
+          
+          {/* Ini kode Anda, tidak saya ubah */}
+          {!isAdminPage && <Header />}
+          
+          <main>
+            {children}
+          </main>
+          
+          {/* Ini kode Anda, tidak saya ubah */}
+          {!isAdminPage && <Footer />}
         
-        {/* Ini adalah tempat halaman (page.js) Anda akan dimuat */}
-        <main>
-          {children}
-        </main>
-        
-        {/* Footer hanya tampil jika BUKAN halaman admin */}
-        {!isAdminPage && <Footer />}
+        {/* --- [TAMBAHAN] Penutup SessionProvider --- */}
+        </SessionProvider>
         
       </body>
     </html>
