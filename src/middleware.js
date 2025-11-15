@@ -1,42 +1,46 @@
 /* Path: src/middleware.js */
-/* PERBAIKAN FINAL: Memutus rantai impor 'authOptions' */
+/* PERBAIKAN: Mengganti withAuth() dengan middleware kustom */
 
-import { withAuth } from "next-auth/middleware";
+import { getToken } from 'next-auth/jwt';
+import { NextResponse } from 'next/server';
 
-// JANGAN import authOptions dari "./lib/auth"
-// karena itu akan menarik 'mongoose' ke Edge Runtime dan menyebabkan crash
+/**
+ * Ini adalah "Satpam" kustom Anda.
+ * Next.js HANYA akan menjalankan fungsi ini pada path
+ * yang didefinisikan di 'config.matcher' di bawah.
+ */
+export async function middleware(req) {
+  // Ambil token (sesi login) dari request
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  
+  // Ambil URL yang sedang diminta
+  const { pathname } = req.nextUrl;
 
-export default withAuth(
-  // Kita konfigurasikan withAuth secara manual di sini
-  // agar dia tidak perlu mengimpor authOptions
-  {
-    // 1. Tentukan halaman mana yang dilindungi
-    callbacks: {
-      authorized: ({ token }) => {
-        // !!token mengubah token (atau null) menjadi boolean
-        // Jika ada token, 'authorized' akan true
-        return !!token;
-      },
-    },
+  // 1. Jika pengguna TIDAK punya token (belum login)
+  if (!token) {
+    // Bangun URL halaman login yang lengkap
+    const loginUrl = new URL('/login', req.url);
     
-    // 2. Beri tahu 'Satpam' di mana Pintu Masuknya
-    // Ini adalah bagian yang memperbaiki crash 'nextUrl' Anda
-    pages: {
-      signIn: '/login', // Redirect ke /login jika tidak authorized
-    },
-
-    // 3. 'Satpam' tetap butuh kunci rahasia yang sama
-    secret: process.env.NEXTAUTH_SECRET,
+    // (Opsional) Tambahkan parameter 'from' agar setelah login bisa kembali
+    loginUrl.searchParams.set('from', pathname); 
+    
+    // Lempar (redirect) pengguna ke halaman login
+    return NextResponse.redirect(loginUrl);
   }
-);
+  
+  // 2. Jika pengguna PUNYA token (sudah login), izinkan dia masuk
+  return NextResponse.next();
+}
 
-// Config ini memberi tahu file mana yang DILINDUNGI
+/**
+ * Config ini memberi tahu Next.js
+ * halaman mana SAJA yang harus dijaga oleh "Satpam" di atas.
+ * * "Satpam" TIDAK AKAN berjalan di /_next/image, /login, /gallery, dll.
+ * Dia HANYA akan berjalan di /admin dan /admin/...
+ */
 export const config = {
   matcher: [
-    /*
-     * Lindungi semua rute yang dimulai dengan /admin:
-     */
-    "/admin",       // <-- Ini untuk /admin (Dashboard)
-    "/admin/:path*"   // <-- Ini untuk /admin/manage-gallery, /admin/edit/..., dll.
+    '/admin',       // <-- Jaga halaman Dashboard
+    '/admin/:path*',  // <-- Jaga SEMUA halaman di dalam admin
   ],
 };
