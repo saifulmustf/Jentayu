@@ -42,17 +42,18 @@ export default function AboutSection() {
             ${inView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}
           `}
         >
-          <h2 className="text-5xl font-extrabold mb-4 text-gray-700">
+          <h2 className="text-6xl font-extrabold mb-4 text-gray-800">
             About Us
           </h2>
-          <p className="text-gray-600 mb-8 leading-relaxed">
-            This team was formed with a focus on innovation and breakthroughs
-            in aeromodeling by developing efficiently designed UAVs. Operating
-            within the rules of the competition is the community's goal.
+          <p className="text-gray-600 mb-8 leading-relaxed text-justify">
+This team was formed with a focus on innovation and breakthroughs in aeromodeling by developing efficiently designed UAVs. Operating within the rules of the competition is the community's goal.
           </p>
           <Link
             href="/profile/about-us"
-            className="inline-block bg-gray-800 text-white font-bold py-4 px-10 rounded-full shadow-lg hover:bg-gray-700 transition duration-300 transform hover:scale-105"
+            className="inline-block text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
+            style={{ backgroundColor: '#000D81' }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#000B6B'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#000D81'}
           >
             Learn More
           </Link>

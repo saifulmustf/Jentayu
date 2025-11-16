@@ -1,6 +1,6 @@
 /* Path: src/components/home/LatestNewsSection.js */
 /* Perbaikan: Menghapus 'fetch' dan memanggil DB langsung */
-/* Ditambahkan: AOS Animation */
+/* Ditambahkan: AOS Animation + Card Lebih Besar */
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -37,9 +37,10 @@ export default async function LatestNewsSection() {
     return (
         /* =============================================
            STRUKTUR FRONTEND (JSX) DENGAN AOS ANIMATION
+           CARD LEBIH BESAR
            =============================================
         */
-        <section className="min-h-screen py-20 bg-gray-50 flex flex-col justify-center">
+        <section className="min-h-screen py-20 bg-gray-50 flex flex-col justify-start items-center pt-24">
             <div className="container mx-auto px-8 max-w-7xl">
                 {/* Header dengan animasi fade-up */}
                 <h2 
@@ -61,7 +62,8 @@ export default async function LatestNewsSection() {
                             data-aos-duration="800"
                             data-aos-delay={100 + (index * 150)} // Delay: 100ms, 250ms, 400ms
                         >
-                            <div className="relative w-full h-64">
+                            {/* GAMBAR LEBIH TINGGI: h-64 → h-80 */}
+                            <div className="relative w-full h-80">
                                 <Image
                                     src={item.imageUrl}
                                     alt={item.title}
@@ -69,14 +71,21 @@ export default async function LatestNewsSection() {
                                     objectFit="cover"
                                 />
                             </div>
-                            <div className="p-6">
-                                <p className="text-sm text-[#515050] font-semibold mb-2">
+                            
+                            {/* PADDING LEBIH BESAR: p-6 → p-8 */}
+                            <div className="p-8">
+                                {/* TANGGAL LEBIH BESAR: text-sm → text-base */}
+                                <p className="text-base text-[#515050] font-semibold mb-3">
                                     {new Date(item.createdAt).toLocaleDateString('id-ID')}
                                 </p>
-                                <h3 className="text-xl font-bold text-gray-800 line-clamp-2 mb-2">
+                                
+                                {/* JUDUL LEBIH BESAR: text-xl → text-2xl */}
+                                <h3 className="text-2xl font-bold text-gray-800 line-clamp-2 mb-3">
                                     {item.title}
                                 </h3>
-                                <p className="text-gray-600 line-clamp-3 text-sm">
+                                
+                                {/* PREVIEW LEBIH BESAR & LEBIH PANJANG: text-sm → text-base, line-clamp-3 → line-clamp-4 */}
+                                <p className="text-gray-600 line-clamp-4 text-base">
                                     {item.content}
                                 </p>
                             </div>
@@ -93,10 +102,12 @@ export default async function LatestNewsSection() {
                 >
                     <Link 
                         href="/news" 
-                        className="inline-block bg-gray-800 text-white font-bold py-4 px-10 rounded-full shadow-lg hover:bg-gray-700 transition duration-300 transform hover:scale-105"
+                        className="inline-block bg-gray-800 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-gray-700 transition duration-300 transform hover:scale-105"
+                        style={{ backgroundColor: '#000D81' }}
                     >
                         Lihat Semua Berita
                     </Link>
+                    
                 </div>
             </div>
         </section>
