@@ -58,6 +58,13 @@ export default function ContactUsPage() {
             data-aos="fade-down"
             data-aos-duration="1000"
             data-aos-delay="200"
+          style={{
+              fontSize: "4rem",
+              fontWeight: "900",
+              fontStyle: "italic",
+              marginBottom: "0.2rem",
+              color: "#FFFFFF",
+          }}
           >
             CONTACT US
           </h1>
@@ -67,7 +74,7 @@ export default function ContactUsPage() {
             data-aos-duration="1000"
             data-aos-delay="400"
           >
-            Kami siap mendengar dari Anda.
+            We'd love to hear from you.
           </p>
         </div>
       </section>
@@ -85,7 +92,7 @@ export default function ContactUsPage() {
                 data-aos-duration="800"
                 data-aos-delay="100"
               >
-                Informasi Kontak
+                Contact Information
               </h2>
               
               {/* Alamat */}
@@ -97,7 +104,7 @@ export default function ContactUsPage() {
               >
                 <FiMapPin size={24} className="mt-1 text-indigo-600 flex-shrink-0" />
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Alamat</h3>
+                  <h3 className="text-xl font-bold text-gray-900">Address</h3>
                   <p className="font-semibold text-gray-700">Student Center Universitas Diponegoro</p>
                   <p className="text-md leading-relaxed text-gray-600">
                     Jl. Prof. Soedarto S.H, Tembalang, Kec. Tembalang, <br />
@@ -115,7 +122,7 @@ export default function ContactUsPage() {
               >
                 <FiPhone size={20} className="text-indigo-600" />
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Telepon</h3>
+                  <h3 className="text-xl font-bold text-gray-900">Phone</h3>
                   <p className="text-md text-gray-600">+62-822-2528-3769</p>
                 </div>
               </div>
@@ -141,7 +148,7 @@ export default function ContactUsPage() {
                 data-aos-duration="600"
                 data-aos-delay="500"
               >
-                Ikuti Kami
+                Follow Us
               </h3>
               <div className="flex flex-col space-y-8">
                 <a 
@@ -187,7 +194,7 @@ export default function ContactUsPage() {
               data-aos-duration="800"
               data-aos-delay="200"
             >
-              <h2 className="text-4xl font-bold text-gray-800 mb-8">Kirim Pesan</h2>
+              <h2 className="text-4xl font-bold text-gray-800 mb-8">Send a Message</h2>
 
               {status && (
                 <div className={`p-4 mb-4 rounded-md text-sm ${
@@ -202,7 +209,7 @@ export default function ContactUsPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Nama */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nama Anda</label>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">Your Name</label>
                   <input
                     type="text"
                     id="name"
@@ -215,7 +222,7 @@ export default function ContactUsPage() {
                 </div>
                 {/* Email */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Anda</label>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">Your Email</label>
                   <input
                     type="email"
                     id="email"
@@ -228,7 +235,7 @@ export default function ContactUsPage() {
                 </div>
                 {/* Pesan */}
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700">Pesan</label>
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
                   <textarea
                     id="message"
                     rows="5"
@@ -249,7 +256,7 @@ export default function ContactUsPage() {
                     {isSubmitting ? (
                       <Loader2 className="w-6 h-6 animate-spin" />
                     ) : (
-                      'Kirim Pesan'
+                      'Send Message'
                     )}
                   </button>
                 </div>

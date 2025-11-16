@@ -44,13 +44,21 @@ export default async function LatestNewsSection() {
             <div className="container mx-auto px-8 max-w-7xl">
                 {/* Header dengan animasi fade-up */}
                 <h2 
-                    className="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-12"
+                    className="text-4xl md:text-6xl font-extrabold text-center text-gray-800 "
                     data-aos="fade-up"
                     data-aos-duration="800"
                 >
                     Latest News & Events
                 </h2>
-                
+                <p 
+                className="text-xl text-gray-500 text-center mb-12"
+                data-aos="fade-up"
+                data-aos-duration="800"
+                data-aos-delay="100"
+                >
+                The Future, Unfolding Now!
+                </p>
+
                 {/* Grid News Cards dengan animasi bertahap */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                     {newsItems.slice(0, 3).map((item, index) => (

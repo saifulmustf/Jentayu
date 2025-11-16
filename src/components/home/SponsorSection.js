@@ -1,97 +1,90 @@
 /* Path: src/components/home/SponsorSection.js */
-/* Perbaikan: Menghapus 'fetch' dan memanggil DB langsung */
-/* Ditambahkan: AOS Animation */
-
 import Image from 'next/image';
-
-// [PERBAIKAN 1]: Impor Model dan dbConnect
 import dbConnect from '@/lib/dbConnect';
 import SponsorItem from '@/models/SponsorItem';
 
-// [PERBAIKAN 2]: getSponsors sekarang memanggil DB langsung
+// Fungsi fetch sponsors dari database
 async function getSponsors() {
   try {
-    await dbConnect(); // Koneksi langsung ke DB
-    
-    // Langsung query ke database
+    await dbConnect();
     const items = await SponsorItem.find({}).sort({ createdAt: 'asc' });
-    
-    // Konversi data Mongoose ke object JSON sederhana
     const plainItems = JSON.parse(JSON.stringify(items));
-    return plainItems;
-
+    
+    // ✅ FILTER: Hanya ambil sponsor dengan logoUrl valid
+    return plainItems.filter(item => 
+      item.logoUrl &&           // ✅ UBAH dari imageUrl → logoUrl
+      item.logoUrl.trim() !== ''
+    );
+    
   } catch (error) {
-    // Jika ini error, MONGODB_URI di Vercel Anda salah
     console.error("DB ERROR (Sponsor Home):", error.message);
     return [];
   }
 }
 
-
-// Komponen Utama (Server Component)
+// Komponen Server Component
 export default async function SponsorSection() {
   const sponsors = await getSponsors();
 
   return (
-    /* =============================================
-       STRUKTUR FRONTEND (JSX) DENGAN AOS ANIMATION
-       =============================================
-    */
-    <section className="min-h-screen px-8 text-center bg-gray-100 flex flex-col justify-center items-center py-20">
-      <div className="container mx-auto">
-        {/* Header dengan animasi fade-up */}
-        <h2 
-          className="text-5xl font-extrabold mb-4 text-gray-800"
-          data-aos="fade-up"
-          data-aos-duration="800"
-        >
-          Our Sponsored
-        </h2>
-        <p 
-          className="text-xl mb-16 text-gray-500"
-          data-aos="fade-up"
-          data-aos-duration="800"
-          data-aos-delay="100"
-        >
-          We are proud to collaborate with our valued partners.
-        </p>
+    <section className="py-16 bg-gradient-to-b text-center from-gray-50 to-white">
+      <div className="container mx-auto px-4">
         
+        {/* Header Section */}
+        <div 
+          className="text-center mb-12"
+          data-aos="fade-up"
+          data-aos-duration="800"
+        >
+          <h2 className="text-6xl font-extrabold text-gray-800 mb-3">
+            Our Sponsors
+          </h2>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            We are proud to collaborate with our valued partners.
+          </p>
+        </div>
+
+        {/* Sponsor Grid */}
         {sponsors.length === 0 ? (
-          <div className="text-center text-gray-500 py-10">
-            <p>Belum ada sponsor yang ditambahkan.</p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-x-12 gap-y-8 items-center max-w-6xl mx-auto mt-8">
+          /* Skeleton Loading */
+          <div className="text-center">
+            <p className="text-gray-500 mb-8 text-lg">
+              Belum ada sponsor yang ditambahkan.
+            </p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
               {Array(7).fill(0).map((_, index) => (
-                <div 
-                  key={index} 
-                  className="flex justify-center items-center h-32 w-40 mx-auto"
+                <div
+                  key={index}
                   data-aos="fade-up"
+                  data-aos-delay={index * 100}
                   data-aos-duration="600"
-                  data-aos-delay={50 * index}
-                > 
-                  <div className="w-full h-full bg-gray-200 animate-pulse rounded-md"></div>
-                </div>
+                  className="bg-gray-200 rounded-xl shadow-md aspect-square animate-pulse"
+                />
               ))}
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-x-12 gap-y-8 items-center max-w-6xl mx-auto">
+          /* Sponsor List */
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             {sponsors.map((sponsor, index) => (
-                <div 
-                  key={sponsor._id} 
-                  className="flex justify-center items-center h-32 w-40 p-2 mx-auto"
-                  data-aos="fade-up"
-                  data-aos-duration="600"
-                  data-aos-delay={50 * index} // Delay bertahap: 0ms, 50ms, 100ms, 150ms, dst
-                >
-                    <Image
-                        src={sponsor.logoUrl}
-                        alt={sponsor.name}
-                        width={180}
-                        height={96}
-                        className="grayscale opacity-75 transition duration-300 hover:grayscale-0 hover:opacity-100"
-                        style={{ objectFit: 'contain' }}
-                    />
+              <div
+                key={sponsor._id}
+                data-aos="zoom-in"
+                data-aos-delay={index * 100}
+                data-aos-duration="600"
+                className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 flex items-center justify-center group hover:scale-105"
+              >
+                <div className="relative w-full h-32">
+                  {/* ✅ UBAH dari imageUrl → logoUrl */}
+                  <Image
+                    src={sponsor.logoUrl}
+                    alt={sponsor.name}
+                    fill
+                    className="object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
                 </div>
+              </div>
             ))}
           </div>
         )}

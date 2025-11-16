@@ -86,7 +86,7 @@ export default async function Home() {
             data-aos-duration="1000"
             data-aos-delay="200"
             style={{
-              fontSize: "4rem",
+              fontSize: "5rem",
               fontWeight: "900",
               fontStyle: "italic",
               marginBottom: "0.2rem",
@@ -100,7 +100,7 @@ export default async function Home() {
             data-aos-duration="1000"
             data-aos-delay="400"
             style={{
-              fontSize: "1.5rem",
+              fontSize: "2rem",
               fontWeight: "700",
               fontStyle: "italic",
               color: "#FFFFFF",

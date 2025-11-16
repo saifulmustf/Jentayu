@@ -83,20 +83,27 @@ export default async function SubTeamDetailPage({ params: paramsPromise }) {
       
       {/* Hero Section dengan animasi */}
       <section 
-        className="py-24 px-8" 
-        style={{ backgroundColor: '#1C2045' }}
+        className="py-8 px-8" 
+        style={{ backgroundColor: '#020B59' }}
       >
         <div className="container mx-auto max-w-4xl">
           <h1 
-            className="text-5xl md:text-6xl font-extrabold text-white text-center mb-12"
+            className="text-5xl md:text-6xl font-extrabold text-white text-center mb-144"
             data-aos="fade-down"
             data-aos-duration="1000"
             data-aos-delay="200"
+          style={{
+              fontSize: "4rem",
+              fontWeight: "900",
+              fontStyle: "italic",
+              marginBottom: "0.2rem",
+              color: "#FFFFFF",
+          }}
           >
             {team.title}
           </h1>
           <div 
-            className="relative w-full h-64 md:h-96 rounded-xl shadow-2xl overflow-hidden bg-gray-200 border-2 border-white"
+            className="relative w-full h-64 md:h-[32rem] rounded-xl shadow-2xl overflow-hidden bg-gray-200 border-2 border-white"
             data-aos="zoom-in"
             data-aos-duration="1000"
             data-aos-delay="400"

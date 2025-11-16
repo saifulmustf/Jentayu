@@ -36,17 +36,25 @@ export default async function GalleryPreviewSection() {
            STRUKTUR FRONTEND (JSX) DENGAN AOS ANIMATION
            =============================================
         */
-        <section className="min-h-screen py-20 bg-white flex flex-col justify-start items-center pt-24">
+        <section className="min-h-screen py-20 bg-white flex flex-col justify-start  items-center pt-24">
             <div className="container mx-auto px-8 max-w-7xl">
                 {/* Header dengan animasi fade-up */}
                 <h2 
-                    className="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-12"
+                    className="text-4xl md:text-6xl font-extrabold text-center text-gray-800 "
                     data-aos="fade-up"
                     data-aos-duration="800"
                 >
                     Our Gallery
                 </h2>
-                
+                <p 
+                className="text-xl mb-8 text-center text-gray-500 mb-12"
+                data-aos="fade-up"
+                data-aos-duration="800"
+                data-aos-delay="100"
+                >
+                Where Vision Meets Reality
+                </p>
+                        
                 {/* Grid Gallery dengan animasi zoom-in bertahap */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {galleryItems.slice(0, 3).map((item, index) => (

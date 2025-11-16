@@ -42,6 +42,13 @@ export default async function GalleryPage() {
             data-aos="zoom-in"
             data-aos-duration="1000"
             data-aos-delay="200"
+          style={{
+              fontSize: "4rem",
+              fontWeight: "900",
+              fontStyle: "italic",
+              marginBottom: "0.2rem",
+              color: "#FFFFFF",
+          }}
           >
             GALLERY
           </h1>

@@ -43,6 +43,13 @@ export default async function NewsPage() {
             data-aos="fade-down"
             data-aos-duration="1000"
             data-aos-delay="200"
+          style={{
+              fontSize: "4rem",
+              fontWeight: "900",
+              fontStyle: "italic",
+              marginBottom: "0.2rem",
+              color: "#FFFFFF",
+          }}
           >
             NEWS & UPDATES
           </h1>
