@@ -108,8 +108,8 @@ export default async function NewsPage() {
                     <Image
                       src={item.imageUrl}
                       alt={item.title}
-                      layout="fill"
-                      objectFit="cover"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                   {/* Konten Teks */}

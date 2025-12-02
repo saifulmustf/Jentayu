@@ -1,7 +1,9 @@
 /* Path: src/app/news/[id]/page.js */
-/* KOREKSI FINAL: Mengambil data langsung dari DB, bukan via API fetch */
+/* KOREKSI FINAL: Data DB Langsung + UI Update (Justify & Back Button) */
 
+import Link from 'next/link'; // [TAMBAHAN] Untuk tombol kembali
 import Image from 'next/image';
+import { ArrowLeft } from 'lucide-react'; // [TAMBAHAN] Ikon panah
 import AosInitializer from '@/components/AosInitializer';
 import dbConnect from '@/lib/dbConnect';
 import NewsItem from '@/models/NewsItem';
@@ -17,7 +19,6 @@ async function getNewsDetail(id) {
     }
 
     // Konversi Mongoose doc ke object JSON sederhana
-    // Ini penting agar data aman di-render oleh Server Component
     const plainItem = JSON.parse(JSON.stringify(item));
     return plainItem;
 
@@ -29,6 +30,7 @@ async function getNewsDetail(id) {
 
 // Komponen Halaman (Server Component)
 export default async function NewsDetailPage({ params: paramsPromise }) {
+  // Menunggu params (kompatibel dengan Next.js terbaru)
   const params = await paramsPromise;
   const item = await getNewsDetail(params.id);
 
@@ -54,6 +56,17 @@ export default async function NewsDetailPage({ params: paramsPromise }) {
       <AosInitializer />
       
       <div className="container mx-auto px-4 max-w-3xl">
+        
+        {/* [TAMBAHAN] Tombol Kembali */}
+        <div className="mb-8" data-aos="fade-right">
+          <Link 
+            href="/news" 
+            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Kembali ke Daftar Berita
+          </Link>
+        </div>
         
         {/* Judul Berita */}
         <h1 
@@ -89,14 +102,15 @@ export default async function NewsDetailPage({ params: paramsPromise }) {
           <Image
             src={item.imageUrl}
             alt={item.title}
-            layout="fill"
-            objectFit="cover"
+            fill
+            className="object-cover" // Menggunakan className standar Next.js baru
           />
         </div>
         
         {/* Konten Berita */}
         <div 
-          className="prose prose-lg max-w-none text-gray-800 whitespace-pre-wrap"
+          // [PERBAIKAN] Menambahkan 'text-justify' di sini
+          className="prose prose-lg max-w-none text-gray-800 whitespace-pre-wrap text-justify"
           data-aos="fade-up"
           data-aos-duration="800"
           data-aos-delay="400"

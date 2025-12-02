@@ -112,8 +112,8 @@ export default async function SubTeamDetailPage({ params: paramsPromise }) {
               src={team.mainImageUrl}
               fallbackSrc={'https://via.placeholder.com/1200x600/e2e8f0/64748b?text=Foto+Tim'}
               alt={`Foto tim ${team.title}`}
-              layout="fill"
-              objectFit="cover"
+              fill
+              className="object-cover"
               priority
               unoptimized
             />

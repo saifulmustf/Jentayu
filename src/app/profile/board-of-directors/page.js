@@ -39,8 +39,8 @@ const MemberCard = ({ member, aosDelay = 0 }) => (
         src={member.memberPhotoUrl}
         fallbackSrc={'https://via.placeholder.com/200x200/e2e8f0/64748b?text=Foto'}
         alt={`Foto ${member.memberName}`}
-        layout="fill"
-        objectFit="cover"
+        fill
+        className="object-cover"
         unoptimized
       />
     </div>
