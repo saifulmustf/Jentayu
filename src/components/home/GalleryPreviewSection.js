@@ -91,7 +91,7 @@ export default async function GalleryPreviewSection() {
                         style={{ backgroundColor: '#000D81' }}
 
                     >
-                        Lihat Semua Galeri
+                        View All
                     </Link>
                 </div>
             </div>

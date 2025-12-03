@@ -73,7 +73,7 @@ export default async function AchievementPage() {
             data-aos-duration="1000"
             data-aos-delay="400"
           >
-            Perjalanan dan pencapaian kami dari tahun ke tahun.
+            Our Journey and Milestones Through the Years
           </p>
         </div>
       </section>

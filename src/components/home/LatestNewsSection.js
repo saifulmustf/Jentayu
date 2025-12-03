@@ -103,7 +103,7 @@ export default async function LatestNewsSection() {
                         className="inline-block bg-gray-800 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-gray-700 transition duration-300 transform hover:scale-105"
                         style={{ backgroundColor: '#000D81' }}
                     >
-                        Lihat Semua Berita
+                        View All
                     </Link>
                 </div>
             </div>
